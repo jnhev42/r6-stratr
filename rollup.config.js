@@ -1,19 +1,19 @@
-import copy from "rollup-plugin-copy";
 import { glob } from "glob";
 import process from "process";
 import livereload from 'rollup-plugin-livereload';
 import serve from 'rollup-plugin-serve';
 import typescript from '@rollup/plugin-typescript';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
+import fs from "fs";
 
 
 const TARGET_ENV = process.env.NODE_ENV;
-const IS_PROD = process.env.NODE_ENV == "prod";
+const IS_PROD = TARGET_ENV == "prod";
 const DIST = `dist/${TARGET_ENV}/`;
 
 const watcher = (globs) => ({
     async buildStart(_options) {
-        for (let g of globs) {
+        for (const g of globs) {
             const files = await glob(g);
 
             files.forEach((filename) => {
@@ -23,31 +23,61 @@ const watcher = (globs) => ({
     },
 });
 
-const TYPESCRIPT = { 
+const copier = {
+    flatten: name => {
+        const split = name.split(/[\\\/]/g);
+        return split[split.length - 1];
+    },
+
+    strip: prefix => name =>
+        name.startsWith(prefix) ?
+            name.slice(prefix.length)
+            : name,
+
+    make: ( {targets} ) => ({
+        async generateBundle() {
+            for (const { src, renamer = (n) => n } of targets) {
+                const files = await glob(src);
+                
+                for (const file of files) {                
+                    const name = renamer(file);
+    
+                    this.emitFile({
+                        type: "asset",
+                        fileName: name,
+                        source: await fs.promises.readFile(file),
+                    });
+                }
+            }
+        }
+    })
+};
+
+const tsconfig = { 
     compilerOptions: {
         lib: ["es5", "es6", "dom"], 
         target: "es5"
     }
 };
 
-const BUILD_PLUGINS = [
+const make_plugins_prod = () => ([
     nodeResolve({ browser: true }),
-    typescript(TYPESCRIPT),
-    copy({
+    typescript(tsconfig),
+    copier.make({
         targets: [
-            { src: ["src/index.html", "assets/"], dest: DIST },
-            { src: ["src/styles/*.css"], dest: `${DIST}/styles/` }
-        ],
-        overwrite: true,
+            { src: "src/index.html", renamer: copier.flatten },
+            { src: "assets/**/*" },
+            { src: "src/styles/*.css", renamer: copier.strip("src/") }
+        ]
     }),
-];
+]);
 
-const DEV_PLUGINS = [
+const make_plugins_dev = () => ([
+    ...make_plugins_prod(),
     serve(DIST),
     livereload(),
     watcher(["src/**/*.{html,css,json}", "assets/*"])
-
-];
+]);
 
 const ROLLUP = {
     input: `src/index.ts`,
@@ -56,11 +86,8 @@ const ROLLUP = {
         format: "iife",
         sourcemap: IS_PROD ? false : "inline",
     },
-    watch: IS_PROD ? false : true,
-    plugins: [ 
-        ...BUILD_PLUGINS,
-        ...(!IS_PROD ? DEV_PLUGINS : [])
-    ]
+    watch: !IS_PROD,
+    plugins: IS_PROD ? make_plugins_prod() : make_plugins_dev()
 };
 
 export default ROLLUP;
