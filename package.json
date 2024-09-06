@@ -1,0 +1,15 @@
+{
+  "name": "stratr",
+  "version": "1.0.0",
+  "description": "A Rainbow 6 Siege Strat Maker",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jnhev42/r6-stratr"
+  },
+  "author": "jnhev42, RowanElsworth",
+  "license": "UNLICENSED"
+}
