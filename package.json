@@ -3,13 +3,32 @@
   "version": "1.0.0",
   "description": "A Rainbow 6 Siege Strat Maker",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/jnhev42/r6-stratr"
   },
   "author": "jnhev42, RowanElsworth",
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "cpy-cli": "^5.0.0",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.56.0",
+    "glob": "^10.3.10",
+    "prettier": "^3.2.4",
+    "rimraf": "^5.0.5",
+    "rollup": "^4.10.0",
+    "rollup-plugin-copy": "^3.5.0"
+  },
+  "scripts": {
+    "start": "npm run dev",
+    "predev": "npm run clean",
+    "dev": "cross-env NODE_ENV=dev rollup -c --watch",
+    "clean": "rimraf dist",
+    "prebuild": "npm run clean",
+    "build": "cross-env NODE_ENV=prod rollup -c",
+    "lint": "eslint src/ ",
+    "lint:fix": "eslint src/ --fix",
+    "format": "prettier --write src/ "
+  },
+  "type": "module"
 }
