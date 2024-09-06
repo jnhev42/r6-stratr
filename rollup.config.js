@@ -4,6 +4,7 @@ import process from "process";
 import livereload from 'rollup-plugin-livereload';
 import serve from 'rollup-plugin-serve';
 import typescript from '@rollup/plugin-typescript';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
 
 
 const TARGET_ENV = process.env.NODE_ENV;
@@ -30,6 +31,7 @@ const TYPESCRIPT = {
 };
 
 const BUILD_PLUGINS = [
+    nodeResolve({ browser: true }),
     typescript(TYPESCRIPT),
     copy({
         targets: [
