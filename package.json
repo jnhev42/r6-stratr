@@ -10,16 +10,18 @@
   "author": "jnhev42, RowanElsworth",
   "license": "UNLICENSED",
   "devDependencies": {
+    "@rollup/plugin-typescript": "^11.1.6",
     "cpy-cli": "^5.0.0",
     "cross-env": "^7.0.3",
-    "eslint": "^8.56.0",
     "glob": "^10.3.10",
     "prettier": "^3.2.4",
     "rimraf": "^5.0.5",
     "rollup": "^4.10.0",
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-livereload": "^2.0.5",
-    "rollup-plugin-serve": "^1.1.1"
+    "rollup-plugin-serve": "^1.1.1",
+    "tslib": "^2.7.0",
+    "typescript": "^5.5.4"
   },
   "scripts": {
     "start": "npm run dev",
@@ -28,8 +30,6 @@
     "clean": "rimraf dist",
     "prebuild": "npm run clean",
     "build": "cross-env NODE_ENV=prod rollup -c",
-    "lint": "eslint src/ ",
-    "lint:fix": "eslint src/ --fix",
     "format": "prettier --write src/ "
   },
   "type": "module"
