@@ -30,10 +30,18 @@ const copier = {
         return split[split.length - 1];
     },
 
-    strip: prefix => name =>
-        name.startsWith(prefix) ?
-            name.slice(prefix.length)
-            : name,
+    strip: prefix => name => {
+        const prefixes = [
+            prefix.replace('\\', '/'),  
+            prefix.replace('/', '\\')
+        ];
+        for (const prf of prefixes) {
+            if (name.startsWith(prf)) {
+                return name.slice(prf.length);
+            }
+        }
+        return name;
+    },
 
     make: ( {targets} ) => ({
         async generateBundle() {
@@ -69,7 +77,7 @@ const make_plugins_prod = () => ([
         targets: [
             { src: "src/index.html", renamer: copier.flatten },
             { src: "assets/**/*" },
-            { src: "src/styles/*.css", renamer: copier.strip("src/") }
+            { src: "src/styles/**/*.css", renamer: copier.strip("src/") }
         ]
     }),
 ]);
