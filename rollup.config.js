@@ -5,6 +5,7 @@ import serve from 'rollup-plugin-serve';
 import typescript from '@rollup/plugin-typescript';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import fs from "fs";
+import commonjs from '@rollup/plugin-commonjs';
 
 
 const TARGET_ENV = process.env.NODE_ENV;
@@ -61,6 +62,7 @@ const tsconfig = {
 };
 
 const make_plugins_prod = () => ([
+    commonjs(),
     nodeResolve({ browser: true }),
     typescript(tsconfig),
     copier.make({

@@ -10,6 +10,7 @@
   "author": "jnhev42, RowanElsworth",
   "license": "UNLICENSED",
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^26.0.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.6",
     "cross-env": "^7.0.3",
@@ -33,6 +34,6 @@
   },
   "type": "module",
   "dependencies": {
-    "fabric": "^6.4.1"
+    "konva": "^9.3.14"
   }
 }

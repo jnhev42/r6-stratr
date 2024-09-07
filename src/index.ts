@@ -10,18 +10,29 @@ let a: Strat = { side: "def" };
 
 console.log(a.side);
 
-import { Canvas, Rect } from 'fabric'; 
+import Konva from "konva";
 
-const canvas_elem = document.querySelector("#strat-canvas") as HTMLCanvasElement;
-console.log(canvas_elem);
-const canvas = new Canvas(canvas_elem);
-console.log(canvas.height, canvas.width, canvas);
-const rect = new Rect({
-    top: 100,
-    left: 100,
-    width: 50,
-    height: 50,
-    fill: "red"
+const stage = new Konva.Stage({
+    container: "container",
+    width: window.innerWidth,
+    height: window.innerHeight,
 });
-canvas.add(rect)
-console.log(canvas.add(rect));
+
+const layer = new Konva.Layer();
+stage.add(layer);
+
+const box = new Konva.Rect({
+    x: 50,
+    y: 50,
+    width: 100,
+    height: 50,
+    fill: "#00D2FF",
+    stroke: "black",
+    strokeWidth: 4,
+    draggable: true,
+    
+});
+layer.add(box);
+
+box.on("mouseover", () => (document.body.style.cursor = "pointer"));
+box.on("mouseout", () => (document.body.style.cursor = "default"));
