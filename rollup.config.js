@@ -76,7 +76,7 @@ const make_plugins_prod = () => ([
     copier.make({
         targets: [
             { src: "src/index.html", renamer: copier.flatten },
-            { src: "assets/**/*" },
+            { src: "assets/**/*.*" },
             { src: "src/styles/**/*.css", renamer: copier.strip("src/") }
         ]
     }),
