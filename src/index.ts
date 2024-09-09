@@ -1,15 +1,3 @@
-console.log("hello :DDDD");
-
-type Side = "atk" | "def";
-
-type Strat = {
-  side: Side;
-};
-
-let a: Strat = { side: "def" };
-
-console.log(a.side);
-
 import Konva from "konva";
 
 Konva.hitOnDragEnabled = true;
@@ -24,15 +12,28 @@ const stage = new Konva.Stage({
 const mapLayer = new Konva.Layer();
 stage.add(mapLayer);
 
-Konva.Image.fromURL('/assets/maps/consulate/ConsulateRWTopFloorB.jpg', function (map) {
-  map.setAttrs({
+// Konva.Image.fromURL('/assets/maps/consulate/ConsulateRWTopFloorB.jpg', function (map) {
+//   map.setAttrs({
+//     x: 0,
+//     y: 0,
+//     width: 1000,
+//     height: 700
+//   });
+  
+// });
+
+const makeImage: (url: string) => Promise<Konva.Image> = url => new Promise(res => Konva.Image.fromURL(url, res));
+(async () => {
+  const backgroundImage = await makeImage('/assets/maps/consulate/ConsulateRWTopFloorB.jpg');
+  backgroundImage.setAttrs({
     x: 0,
     y: 0,
     width: 1000,
     height: 700
   });
-  mapLayer.add(map);
-});
+  mapLayer.add(backgroundImage);
+})();
+
 
 const pieceLayer = new Konva.Layer();
 stage.add(pieceLayer);
@@ -53,10 +54,12 @@ stage.on('wheel', (e) => {
   // stop default scrolling
   e.evt.preventDefault();
 
-  var oldScale = stage.scaleX();
-  var pointer = stage.getPointerPosition();
+  let oldScale = stage.scaleX();
+  let pointer = stage.getPointerPosition();
 
-  var mousePointTo = {
+  if (pointer === null) return;
+
+  let mousePointTo = {
     x: (pointer.x - stage.x()) / oldScale,
     y: (pointer.y - stage.y()) / oldScale,
   };
@@ -70,11 +73,11 @@ stage.on('wheel', (e) => {
     direction = -direction;
   }
 
-  var newScale = direction > 0 ? oldScale * 0.95 : oldScale / 0.95;
+  let newScale = direction > 0 ? oldScale * 0.95 : oldScale / 0.95;
 
   stage.scale({ x: newScale, y: newScale });
 
-  var newPos = {
+  let newPos = {
     x: pointer.x - mousePointTo.x * newScale,
     y: pointer.y - mousePointTo.y * newScale,
   };
