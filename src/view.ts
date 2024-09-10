@@ -9,8 +9,8 @@ export class StageView {
     this.floors = floors;
     this.stage = new Konva.Stage({
       container: "container",
-      width: window.innerWidth,
-      height: window.innerHeight,
+      width: 700,
+      height: 500,
       draggable: true,
     });
     for (const floor of this.floors) {
@@ -74,6 +74,16 @@ export class PieceView {
     ret.image.setDraggable(true);
     ret.image.on("mouseover", () => (document.body.style.cursor = "pointer"));
     ret.image.on("mouseout", () => (document.body.style.cursor = "default"));
+
+    ret.image.on('dragstart', function () {
+      console.log("x: ", ret.image.x(), "y: ", ret.image.y());
+    })
+
+    ret.image.on('dragend', function () {
+      ret.image.x()
+      ret.image.y()
+    })
+
     return ret;
   }
 }

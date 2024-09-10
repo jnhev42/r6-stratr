@@ -1,36 +1,93 @@
+import { MapFloor, MapFloors, MapName, PlayerId, Side } from "./data";
 
-export type Side = "atk" | "def";
-
-export type Op = {
-  icon: String;
-  name: String;
-  ability: String;
-  gadget: String;
+export class Lineup {
+  inner: Map<PlayerId, OpConfig>;
+  side: Side;
+  constructor(side: Side) {
+    this.inner = new Map();
+    this.side = side;
+  }
 }
 
-export type OpConfig = {
-  username: String;
+export type Coords = {
+  x: number;
+  y: number;
+}
+
+export type R6Map = {
+  name: MapName,
+  phases: Phase[],
+}
+
+export class Op {
+  icon: string;
+  name: string;
+  ability: string;
+  gadget: string;
+
+  constructor(icon: string, name: string, ability: string, gadget: string) {
+    this.icon = icon;
+    this.name = name;
+    this.ability = ability;
+    this.gadget = gadget;
+  }
+}
+
+export class OpConfig {
+  username: string;
   character: Op;
-  Note: String;
+  note: string;
+
+  constructor(username: string, character: Op, note: string) {
+    this.username = username;
+    this.character = character;
+    this.note = note;
+  }
 }
 
 export type Piece = {
-  owner: String;
-  kind: String;
-  visibility: String;
-  visibilityGlobal: Boolean;
-  Floor: Number;
-  Position: [Number, Number];
+  owner: string;
+  kind: string; // what kind of util is it (op, gadget, etc)
+  visibility: string;
+  visibilityGlobal: boolean;
+  Position: Coords;
 }
 
-export type Phase = {
-  name: String;
+export class Floor {
+  floorName: string;
   pieces: Piece[];
+
+  constructor(name: string) {
+    this.floorName = name;
+    this.pieces = [];
+  }
 }
 
-export type Strat = {
-  mapName: String;
-  side: Side;
-  lineup: OpConfig[];
-  phases: Phase[];
-};
+export class Phase {
+  phaseName: string;
+  floors: Floor[];
+
+  constructor(name: string, mapName: MapName) {
+    this.phaseName = name;
+    console.log(mapName);
+    this.floors = Array.from(
+      MapFloors[mapName] as MapFloor, 
+      name => new Floor(name)
+    );
+  }
+}
+
+export class Strat {
+  stratName: string;
+  map: R6Map;
+  lineup: Lineup;
+ 
+  constructor(stratName: string, mapName: MapName, side: Side) {
+    this.stratName = stratName;
+    this.map = {
+      name: mapName,
+      phases: [new Phase("default", mapName)]
+    };
+    this.lineup = new Lineup(side);
+  }
+}

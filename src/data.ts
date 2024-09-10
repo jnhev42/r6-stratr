@@ -1,3 +1,5 @@
+import { R6Map } from "./model";
+
 export const Defenders = {
   Smoke: "Smoke",
   Mute: "Mute",
@@ -156,3 +158,41 @@ export const Operators = {
   ...Attackers,
   ...Defenders,
 } as const;
+
+export const MapNames = {
+  Bank: "Bank",
+  Border: "Border",
+  Chalet: "Chalet",
+  Clubhouse: "Clubhouse",
+  Consulate: "Consulate",
+  Kafe: "Kafe",
+  Nighthaven: "Nigthaven",
+  Lair: "Lair",
+  Skyscraper: "Skyscraper",
+} as const;
+export type MapName = typeof MapNames[keyof typeof MapNames];
+
+export const MapFloors = {
+  Bank: ["B", "1F", "2F"],
+  Border: ["1F", "2F"],
+  Chalet: ["B", "1F", "2F"],
+  Clubhouse: ["B", "1F", "2F"],
+  Consulate: ["B", "1F", "2F"],
+  Kafe: ["1F", "2F", "3F"],
+  Nighthaven: ["B", "1F", "2F"],
+  Lair: ["B", "1F", "2F"],
+  Skyscraper: ["1F", "2F"],
+} as const;
+export type MapFloor = typeof MapFloors[keyof typeof MapFloors];
+
+export type Side = "atk" | "def"; 
+
+
+export const PlayerIds = {
+  P1: "P1",
+  P2: "P2",
+  P3: "P3",
+  P4: "P4",
+  P5: "P5",
+} as const;
+export type PlayerId = typeof PlayerIds[keyof typeof PlayerIds];

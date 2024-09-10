@@ -1,3 +1,7 @@
 body {
   color: blue;
 }
+
+#container {
+  border: 2px solid black;
+}
