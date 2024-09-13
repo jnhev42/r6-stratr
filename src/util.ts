@@ -1,7 +1,28 @@
 import Konva from "konva";
 
-export const konvaImageFromUrl: (url: string) => Promise<Konva.Image> = (url) =>
-  new Promise((res) => Konva.Image.fromURL(url, res));
+// assets\Ops\Icons\recruit_blue.png
+
+const LOADING_IMAGE = new Image();
+LOADING_IMAGE.src = "assets/Ops/Icons/recruit_blue.png";
+
+export const essentialStartup = (): Promise<void> => {
+  if (LOADING_IMAGE.complete) return new Promise(() => {});
+  return new Promise((res) => (LOADING_IMAGE.onload = () => res()));
+};
+
+export const konvaImageFromUrl = (url: string): Konva.Image => {
+  const konvaImage = new Konva.Image({
+    image: LOADING_IMAGE,
+  });
+
+  const actualImage = new Image();
+  actualImage.onload = function () {
+    konvaImage.image(actualImage);
+  };
+  actualImage.src = url;
+
+  return konvaImage;
+};
 
 export const konvaMakeStageZoomable = (stage: Konva.Stage) => {
   stage.on("wheel", (e) => {

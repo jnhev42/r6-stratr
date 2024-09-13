@@ -1,5 +1,8 @@
 import Konva from "konva";
 import { konvaImageFromUrl, konvaMakeStageZoomable } from "./util";
+import { PieceController, StratController } from "./controller";
+import { Floor, Model, Piece } from "./model";
+import { MapFloorName } from "./data";
 
 export class StageView {
   stage: Konva.Stage;
@@ -25,18 +28,14 @@ export class BlueprintView {
   layer: Konva.Layer;
   image: Konva.Image;
 
-  private constructor(layer: Konva.Layer, image: Konva.Image) {
-    this.layer = layer;
-    this.image = image;
-  }
+  constructor(url: string) {
+    this.layer = new Konva.Layer();
+    this.image = konvaImageFromUrl(url);
 
-  static async new(url: string) {
-    const ret = new BlueprintView(
-      new Konva.Layer(),
-      await konvaImageFromUrl(url)
-    );
-    ret.layer.add(ret.image);
-    return ret;
+    this.layer.add(this.image);
+
+    this.image.width(700); // temp vals for because it annoys the fuck out of me
+    this.image.height(500);
   }
 }
 
@@ -54,51 +53,107 @@ export class PiecesView {
     this.pieces = [];
   }
 
-  async addPiece(url: string) {
-    const piece = await PieceView.new(url);
+  addPiece(controller: StratController, modelPiece: Piece) {
+    const piece = new PieceView(controller, modelPiece);
 
     this.layer.add(piece.image);
     this.pieces.push(piece);
+  }
+
+  removePiece() {}
+
+  update(controller: StratController, currentPieces: Piece[]) {
+    let newPieces = new Set(currentPieces);
+    console.log(newPieces, this.pieces);
+    for (const pv of this.pieces) {
+      if (currentPieces.some((pm) => pm === pv.piece)) {
+        console.log("updating", pv.piece.kind);
+        pv.update();
+        newPieces.delete(pv.piece);
+      } else {
+        console.log("destroying", pv.piece.kind);
+        pv.destroy();
+        this.pieces = this.pieces.filter((e) => e !== pv);
+      }
+    }
+
+    for (const [newPiece, _] of newPieces.entries()) {
+      console.log("adding", newPiece);
+      this.addPiece(controller, newPiece);
+    }
   }
 }
 
 export class PieceView {
   image: Konva.Image;
+  piece: Piece;
 
-  private constructor(image: Konva.Image) {
-    this.image = image;
+  constructor(controller: StratController, piece: Piece) {
+    this.image = konvaImageFromUrl(`/assets/Ops/Icons/${piece.kind}.png`);
+    this.piece = piece;
+    this.image.setDraggable(true);
+    this.image.on("mouseover", () => (document.body.style.cursor = "pointer"));
+    this.image.on("mouseout", () => (document.body.style.cursor = "default"));
+
+    this.image.width(75); // temp vals for because it annoys the fuck out of me
+    this.image.height(75);
+
+    this.image.x(piece.position.x);
+    this.image.y(piece.position.y);
+
+    const that = this;
+    this.image.on("dragend", function () {
+      let x = that.image.x();
+      let y = that.image.y();
+
+      controller.updatePosition(that.piece, { x, y });
+
+      console.log("x: ", that.image.x(), "y: ", that.image.y());
+    });
+
+    this.image.on("mousedown", function () {
+      console.log("x: ", that.image.x(), "y: ", that.image.y());
+      controller.removePiece(that.piece);
+    });
   }
 
-  static async new(url: string) {
-    const ret = new PieceView(await konvaImageFromUrl(url));
-    ret.image.setDraggable(true);
-    ret.image.on("mouseover", () => (document.body.style.cursor = "pointer"));
-    ret.image.on("mouseout", () => (document.body.style.cursor = "default"));
+  destroy() {
+    this.image.destroy();
+  }
 
-    ret.image.on('dragstart', function () {
-      console.log("x: ", ret.image.x(), "y: ", ret.image.y());
-    })
-
-    ret.image.on('dragend', function () {
-      ret.image.x()
-      ret.image.y()
-    })
-
-    return ret;
+  update() {
+    this.image.setPosition(this.piece.position);
   }
 }
 
-export const makeView: () => Promise<StageView> = async () => {
-  const pieces = new PiecesView();
+export class View {
+  model: Model;
+  controller: StratController;
+  currentFloor: MapFloorName = "2F";
+  currentPhase: string = "default";
+  pieces: PiecesView;
 
-  pieces.addPiece("/assets/Ops/Icons/grid.png");
+  constructor(controller: StratController) {
+    this.controller = controller;
+    this.pieces = new PiecesView();
+  }
 
-  const floor = {
-    bp: await BlueprintView.new(
-      "/assets/maps/consulate/ConsulateRWTopFloorB.jpg"
-    ),
-    pieces,
-  };
+  init(model: Model, controller: StratController): StageView {
+    this.model = model;
+    this.controller = controller;
 
-  return new StageView([floor]);
-};
+    const floor: FloorView = {
+      bp: new BlueprintView("/assets/maps/consulate/ConsulateRWTopFloorB.jpg"),
+      pieces: this.pieces,
+    };
+
+    return new StageView([floor]);
+  }
+
+  update(controller: StratController) {
+    this.pieces.update(
+      controller,
+      this.model.map.phases[0].floors[this.currentFloor]!.pieces
+    );
+  }
+}

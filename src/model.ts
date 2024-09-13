@@ -1,93 +1,112 @@
-import { MapFloor, MapFloors, MapName, PlayerId, Side } from "./data";
+import {
+  MapFloor,
+  MapFloorName,
+  MapFloors,
+  MapName,
+  Operator,
+  PieceKind,
+  PlayerId,
+  SecondaryGadget,
+  Side,
+} from "./data";
+import { StratController } from "./controller";
 
-export class Lineup {
-  inner: Map<PlayerId, OpConfig>;
+export type Lineup = {
   side: Side;
-  constructor(side: Side) {
-    this.inner = new Map();
-    this.side = side;
-  }
-}
+  P1?: Operator;
+  P2?: Operator;
+  P3?: Operator;
+  P4?: Operator;
+  P5?: Operator;
+};
+
+export const newLineup = (side: Side): Lineup => ({
+  side,
+});
 
 export type Coords = {
   x: number;
   y: number;
-}
+};
 
 export type R6Map = {
-  name: MapName,
-  phases: Phase[],
-}
+  name: MapName;
+  phases: Phase[];
+};
 
-export class Op {
-  icon: string;
-  name: string;
-  ability: string;
-  gadget: string;
-
-  constructor(icon: string, name: string, ability: string, gadget: string) {
-    this.icon = icon;
-    this.name = name;
-    this.ability = ability;
-    this.gadget = gadget;
-  }
-}
-
-export class OpConfig {
+export type OpConfig = {
   username: string;
-  character: Op;
+  character: Operator;
+  secondary: SecondaryGadget;
   note: string;
-
-  constructor(username: string, character: Op, note: string) {
-    this.username = username;
-    this.character = character;
-    this.note = note;
-  }
-}
+};
+export const newOpConfig = (
+  username: string,
+  character: Operator,
+  secondary: SecondaryGadget,
+  note: string
+) => ({
+  username,
+  character,
+  secondary,
+  note,
+});
 
 export type Piece = {
-  owner: string;
-  kind: string; // what kind of util is it (op, gadget, etc)
-  visibility: string;
-  visibilityGlobal: boolean;
-  Position: Coords;
-}
+  kind: PieceKind; // what kind of util is it (op, gadget, etc)
+  visibility: PlayerId[];
+  position: Coords;
+};
+export const newPiece = (kind: PieceKind, position: Coords): Piece => ({
+  kind,
+  position,
+  visibility: [],
+});
 
-export class Floor {
-  floorName: string;
+export type Floor = {
+  floorName: MapFloorName;
   pieces: Piece[];
+};
+export const newFloor = (floorName: MapFloorName): Floor => ({
+  floorName,
+  pieces: [],
+});
 
-  constructor(name: string) {
-    this.floorName = name;
-    this.pieces = [];
-  }
-}
+export type Floors = {
+  B?: Floor;
+  ["1F"]: Floor;
+  ["2F"]: Floor;
+  ["3F"]?: Floor;
+};
 
-export class Phase {
+export type Phase = {
   phaseName: string;
-  floors: Floor[];
+  floors: Floors;
+};
+export const newPhase = (phaseName: string, mapName: MapName): Phase => ({
+  phaseName,
+  floors: Object.fromEntries(
+    (MapFloors[mapName] as MapFloor).map((f) => [f, newFloor(f)])
+  ),
+});
 
-  constructor(name: string, mapName: MapName) {
-    this.phaseName = name;
-    console.log(mapName);
-    this.floors = Array.from(
-      MapFloors[mapName] as MapFloor, 
-      name => new Floor(name)
-    );
-  }
-}
+export class Model {
+  controller: StratController;
 
-export class Strat {
   stratName: string;
   map: R6Map;
   lineup: Lineup;
- 
+
   constructor(stratName: string, mapName: MapName, side: Side) {
     this.stratName = stratName;
     this.map = {
       name: mapName,
-      phases: [new Phase("default", mapName)]
+      phases: [newPhase("default", mapName)],
     };
-    this.lineup = new Lineup(side);
+    this.lineup = newLineup(side);
+  }
+
+  init(controller: StratController) {
+    this.controller = controller;
   }
 }
