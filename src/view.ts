@@ -1,8 +1,13 @@
 import Konva from "konva";
 import { konvaImageFromUrl, konvaMakeStageZoomable } from "./util";
-import { PieceController, StratController } from "./controller";
+import { StratController } from "./controller";
 import { Floor, Model, Piece } from "./model";
 import { MapFloorName } from "./data";
+
+export type CurrentView = {
+  floor: MapFloorName;
+  phaseName: string;
+};
 
 export class StageView {
   stage: Konva.Stage;
@@ -47,14 +52,16 @@ export type FloorView = {
 export class PiecesView {
   layer: Konva.Layer;
   pieces: PieceView[];
+  current: CurrentView;
 
-  constructor() {
+  constructor(current: CurrentView) {
+    this.current = current;
     this.layer = new Konva.Layer();
     this.pieces = [];
   }
 
   addPiece(controller: StratController, modelPiece: Piece) {
-    const piece = new PieceView(controller, modelPiece);
+    const piece = new PieceView(controller, this.current, modelPiece);
 
     this.layer.add(piece.image);
     this.pieces.push(piece);
@@ -83,8 +90,10 @@ export class PiecesView {
 export class PieceView {
   image: Konva.Image;
   piece: Piece;
+  current: CurrentView;
 
-  constructor(controller: StratController, piece: Piece) {
+  constructor(controller: StratController, current: CurrentView, piece: Piece) {
+    this.current = current;
     this.image = konvaImageFromUrl(`/assets/Ops/Icons/${piece.kind}.png`);
     this.piece = piece;
     this.image.setDraggable(true);
@@ -106,7 +115,12 @@ export class PieceView {
     });
 
     this.image.on("mousedown", function () {
-      controller.removePiece(that.piece);
+      console.log("x: ", that.image.x(), "y: ", that.image.y());
+      controller.removePiece(
+        that.piece,
+        that.current.floor,
+        that.current.phaseName
+      );
     });
   }
 
@@ -122,13 +136,15 @@ export class PieceView {
 export class View {
   model: Model;
   controller: StratController;
-  currentFloor: MapFloorName = "2F";
-  currentPhase: string = "default";
+  current: CurrentView = {
+    floor: "2F",
+    phaseName: "default",
+  };
   pieces: PiecesView;
 
   constructor(controller: StratController) {
     this.controller = controller;
-    this.pieces = new PiecesView();
+    this.pieces = new PiecesView(this.current);
   }
 
   init(model: Model, controller: StratController): StageView {
@@ -146,7 +162,7 @@ export class View {
   update(controller: StratController) {
     this.pieces.update(
       controller,
-      this.model.map.phases[0].floors[this.currentFloor]!.pieces
+      this.model.getFloor(this.current.floor, this.current.phaseName)!.pieces
     );
   }
 }

@@ -35,26 +35,7 @@ const testPieceGrim: Piece = {
 
   // test code
 
-  controller.addPiece(
-    model.map.phases.find((phase) => phase.phaseName === "default")!.floors[
-      "2F"
-    ],
-    testPieceGrid
-  );
+  controller.addPiece(testPieceGrid, "2F", "default");
 
-  controller.addPiece(
-    model.map.phases.find((phase) => phase.phaseName === "default")!.floors[
-      "2F"
-    ],
-    testPieceGrim
-  );
-
-  saveBtn?.addEventListener("click", () => {
-    const { controller, ...newModel } = model;
-    localStorage.setItem("strat", JSON.stringify(newModel));
-  });
-
-  loadBtn?.addEventListener("click", () => {
-    let newStrat = JSON.parse(localStorage.getItem("strat")!);
-  });
+  controller.addPiece(testPieceGrim, "2F", "default");
 })();
