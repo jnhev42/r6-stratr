@@ -109,4 +109,12 @@ export class Model {
   init(controller: StratController) {
     this.controller = controller;
   }
+
+  getFloor(floor: MapFloorName, phaseName: string): Floor | undefined {
+    const phase = this.map.phases.find(
+      (phase) => phase.phaseName === phaseName
+    );
+    if (!phase) return undefined;
+    return phase.floors[floor];
+  }
 }

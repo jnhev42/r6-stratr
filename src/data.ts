@@ -40,31 +40,31 @@ export const Attackers = {
 export type Attacker = (typeof Attackers)[keyof typeof Attackers];
 
 export const AttackerGadgets = {
-  Thatcher: "emp",
-  Ash: "m120",
-  Thermite: "exothermic",
-  Twitch: "shock_drone",
-  Fuze: "cluster_charge",
-  Capitao: ["smoke_bolt", "fire_bolt"],
-  Hibana: "xkarios",
-  Ying: "candela",
-  Zofia: ["impact_stun", "impact_concuss"],
-  Dokkaebi: "call",
-  Lion: "ee_one_d",
-  Finka: "adrenal",
-  Maverick: "suri",
-  Nomad: "airjab",
-  Gridlock: "trax",
-  Amaru: "garra",
-  Kali: "lance",
-  Ace: "selma",
-  Zero: "argus",
-  Flores: "ratero",
-  Osa: "talon",
-  Sens: "rou",
-  Grim: "bees",
-  Ram: "bugi",
-  Deimos: "deathmark",
+  ThatcherG: "emp",
+  AshG: "m120",
+  ThermiteG: "exothermic",
+  TwitchG: "shock_drone",
+  FuzeG: "cluster_charge",
+  CapitaoG: ["smoke_bolt", "fire_bolt"],
+  HibanaG: "xkarios",
+  YingG: "candela",
+  ZofiaG: ["impact_stun", "impact_concuss"],
+  DokkaebiG: "call",
+  LionG: "ee_one_d",
+  FinkaG: "adrenal",
+  MaverickG: "suri",
+  NomadG: "airjab",
+  GridlockG: "trax",
+  AmaruG: "garra",
+  KaliG: "lance",
+  AceG: "selma",
+  ZeroG: "argus",
+  FloresG: "ratero",
+  OsaG: "talon",
+  SensG: "rou",
+  GrimG: "bees",
+  RamG: "bugi",
+  DeimosG: "deathmark",
 } as const;
 export type AttackerGadget =
   (typeof AttackerGadgets)[keyof typeof AttackerGadgets];
@@ -123,30 +123,30 @@ export const Defenders = {
 export type Defender = (typeof Defenders)[keyof typeof Defenders];
 
 export const DefenderGadgets = {
-  Smoke: "babe",
-  Mute: "jammer",
-  Castle: "armor_panel",
-  Kapkan: "edd",
-  Tachanka: "molly",
-  Jager: "ads",
-  Bandit: "batteries",
-  Frost: "mats",
-  Valkyire: "black_eye",
-  Echo: "yokai",
-  Mira: "window",
-  Lesion: "gu",
-  Ela: "grzmot",
-  Maestro: "evil_eye",
-  Alibi: "clone",
-  Kaid: "claw",
-  Mozzie: "pest",
-  Goyo: "gas_can",
-  Wamai: "disc",
-  Oryx: "dash",
-  Melusi: "banshee",
-  Aruni: "surya",
-  Fenrir: "fnat",
-  Tubarao: "zoto",
+  SmokeG: "babe",
+  MuteG: "jammer",
+  CastleG: "armor_panel",
+  KapkanG: "edd",
+  TachankaG: "molly",
+  JagerG: "ads",
+  BanditG: "batteries",
+  FrostG: "mats",
+  ValkyireG: "black_eye",
+  EchoG: "yokai",
+  MiraG: "window",
+  LesionG: "gu",
+  ElaG: "grzmot",
+  MaestroG: "evil_eye",
+  AlibiG: "clone",
+  KaidG: "claw",
+  MozzieG: "pest",
+  GoyoG: "gas_can",
+  WamaiG: "disc",
+  OryxG: "dash",
+  MelusiG: "banshee",
+  AruniG: "surya",
+  FenrirG: "fnat",
+  TubaraoG: "zoto",
 } as const;
 export type DefenderGadget =
   (typeof DefenderGadgets)[keyof typeof DefenderGadgets];
@@ -169,10 +169,17 @@ export const Operators = {
 } as const;
 export type Operator = (typeof Operators)[keyof typeof Operators];
 
+export const PrimaryGadgets = {
+  ...AttackerGadgets,
+  ...DefenderGadgets,
+} as const;
+export type PrimaryGadget =
+  (typeof PrimaryGadgets)[keyof typeof PrimaryGadgets];
+
 export const SecondaryGadgets = {
   ...AttackerSecondaryGadgets,
   ...DefenderSecondaryGadgets,
-};
+} as const;
 export type SecondaryGadget =
   (typeof SecondaryGadgets)[keyof typeof SecondaryGadgets];
 
@@ -222,3 +229,7 @@ export const PlayerIds = {
   P5: "P5",
 } as const;
 export type PlayerId = (typeof PlayerIds)[keyof typeof PlayerIds];
+
+export const getOperatorGadget = (op: Operator): PrimaryGadget | undefined => {
+  return PrimaryGadgets[op.concat("G")];
+};

@@ -34,17 +34,7 @@ const testPieceGrim: Piece = {
 
   // test code
 
-  controller.addPiece(
-    model.map.phases.find((phase) => phase.phaseName === "default")!.floors[
-      "2F"
-    ],
-    testPieceGrid
-  );
+  controller.addPiece(testPieceGrid, "2F", "default");
 
-  controller.addPiece(
-    model.map.phases.find((phase) => phase.phaseName === "default")!.floors[
-      "2F"
-    ],
-    testPieceGrim
-  );
+  controller.addPiece(testPieceGrim, "2F", "default");
 })();
