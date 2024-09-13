@@ -4,8 +4,8 @@
 </head>
 <body>
   <div id="statr-start"></div>
-  <h1>R6 Stratr</h1>
-  <form>
+  <h1 hidden>R6 Stratr</h1>
+  <form hidden>
     <div>
       <label for="map-select">Map</label>
       <select name="map" id="map-select">
@@ -43,10 +43,47 @@
     </div>
   </form>
 
-  <div id="stratr-edit">
-    <nav></nav>
-    <div id="container"></div>
+  <div class="button-container" hidden>
+    <button id="save">Save</button>
+    <button id="load">Load</button>
   </div>
+
+  <main>
+    <div class="left-bar">
+      <div class="nav">
+        <!-- could be nav -->
+        <ul>
+          <li><button>Nav</button></li>
+          <li><button>Info</button></li>
+          <li><button>Cog</button></li>
+        </ul>
+      </div>
+      <div class="info"></div>
+      <div class="lineup">
+        <h2>Lineup</h2>
+      </div>
+    </div>
+
+    <div class="top-bar">
+      <div class="topper">
+        <div class="select">
+          <ul>
+            <li><button>Pieces</button></li>
+            <li><button>Markup</button></li>
+            <li><button>Ownerships</button></li>
+          </ul>
+        </div>
+      </div>
+      <div class="botter">
+        <p>stuff goes here :DDDD</p>
+      </div>
+    </div>
+
+    <div id="stratr-edit">
+      <nav></nav>
+      <div id="container"></div>
+    </div>
+  </main>
 
   <script src="index.js"></script>
 </body>

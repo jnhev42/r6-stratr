@@ -6,7 +6,8 @@ import { essentialStartup } from "./util";
 
 Konva.hitOnDragEnabled = true;
 
-const btn = document.querySelector("#potato");
+const saveBtn = document.querySelector("#save");
+const loadBtn = document.querySelector("#load");
 
 const testPieceGrid: Piece = {
   kind: "Gridlock",
@@ -25,7 +26,7 @@ const testPieceGrim: Piece = {
   const model = new Model("balls", "Consulate", "atk");
   const controller = new StratController();
   const view = new View(controller);
-  console.log(view);
+
   model.init(controller);
   controller.init(model, view);
   view.init(model, controller);
@@ -47,4 +48,13 @@ const testPieceGrim: Piece = {
     ],
     testPieceGrim
   );
+
+  saveBtn?.addEventListener("click", () => {
+    const { controller, ...newModel } = model;
+    localStorage.setItem("strat", JSON.stringify(newModel));
+  });
+
+  loadBtn?.addEventListener("click", () => {
+    let newStrat = JSON.parse(localStorage.getItem("strat")!);
+  });
 })();

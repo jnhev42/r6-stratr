@@ -12,8 +12,8 @@ export class StageView {
     this.floors = floors;
     this.stage = new Konva.Stage({
       container: "container",
-      width: 700,
-      height: 500,
+      width: 1200,
+      height: 700,
       draggable: true,
     });
     for (const floor of this.floors) {
@@ -34,8 +34,8 @@ export class BlueprintView {
 
     this.layer.add(this.image);
 
-    this.image.width(700); // temp vals for because it annoys the fuck out of me
-    this.image.height(500);
+    this.image.width(1200); // temp vals for because it annoys the fuck out of me
+    this.image.height(700);
   }
 }
 
@@ -64,21 +64,17 @@ export class PiecesView {
 
   update(controller: StratController, currentPieces: Piece[]) {
     let newPieces = new Set(currentPieces);
-    console.log(newPieces, this.pieces);
     for (const pv of this.pieces) {
       if (currentPieces.some((pm) => pm === pv.piece)) {
-        console.log("updating", pv.piece.kind);
         pv.update();
         newPieces.delete(pv.piece);
       } else {
-        console.log("destroying", pv.piece.kind);
         pv.destroy();
         this.pieces = this.pieces.filter((e) => e !== pv);
       }
     }
 
     for (const [newPiece, _] of newPieces.entries()) {
-      console.log("adding", newPiece);
       this.addPiece(controller, newPiece);
     }
   }
@@ -95,8 +91,8 @@ export class PieceView {
     this.image.on("mouseover", () => (document.body.style.cursor = "pointer"));
     this.image.on("mouseout", () => (document.body.style.cursor = "default"));
 
-    this.image.width(75); // temp vals for because it annoys the fuck out of me
-    this.image.height(75);
+    this.image.width(30); // temp vals for because it annoys the fuck out of me
+    this.image.height(30);
 
     this.image.x(piece.position.x);
     this.image.y(piece.position.y);
@@ -107,12 +103,9 @@ export class PieceView {
       let y = that.image.y();
 
       controller.updatePosition(that.piece, { x, y });
-
-      console.log("x: ", that.image.x(), "y: ", that.image.y());
     });
 
     this.image.on("mousedown", function () {
-      console.log("x: ", that.image.x(), "y: ", that.image.y());
       controller.removePiece(that.piece);
     });
   }
