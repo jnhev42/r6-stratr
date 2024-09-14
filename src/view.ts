@@ -118,8 +118,6 @@ export class PieceView {
       console.log("x: ", that.image.x(), "y: ", that.image.y());
       controller.removePiece(
         that.piece,
-        that.current.floor,
-        that.current.phaseName
       );
     });
   }
@@ -130,6 +128,7 @@ export class PieceView {
 
   update() {
     this.image.setPosition(this.piece.position);
+    
   }
 }
 

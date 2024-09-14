@@ -117,4 +117,23 @@ export class Model {
     if (!phase) return undefined;
     return phase.floors[floor];
   }
+
+  *pieces(): Generator<[Piece, MapFloorName, string], void, unknown> {
+    for (const phase of this.map.phases) {
+      for (const floor of Object.values(phase.floors)) {
+        for (const piece of floor.pieces) {
+          yield [piece, floor.floorName, phase.phaseName];
+        }
+      }
+    }
+  }
+
+  removePiece(toDelete: Piece) {
+    for (const [piece, floor, phase] of this.pieces()) {
+      if (piece == toDelete) {
+        const target = this.getFloor(floor, phase)!.pieces;
+        target.splice(target.indexOf(piece), 1);
+      }
+    }
+  }
 }
