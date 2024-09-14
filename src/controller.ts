@@ -1,4 +1,4 @@
-import { MapFloorName } from "./data";
+import { MapFloorName, PlayerId } from "./data";
 import { Model, OpConfig, Phase, Floor, Piece, Coords } from "./model";
 import { View } from "./view";
 
@@ -16,17 +16,28 @@ export class StratController {
     this.view.update(this);
   }
 
-  removePiece(piece: Piece, floor: MapFloorName, phaseName: string) {
+  removePiece(piece: Piece) {
     // remove from model
     // this.model.map.phases
-    const target = this.model.getFloor(floor, phaseName)!;
-
-    target.pieces = target.pieces.filter((p) => p !== piece);
+    this.model.removePiece(piece);
 
     this.view.update(this);
   }
 
   updatePosition(piece: Piece, coords: Coords) {
     piece.position = { x: coords.x, y: coords.y };
+  }
+
+  showPiece(piece: Piece, from: PlayerId) {
+    if (!piece.visibility.includes(from)) {
+      piece.visibility.push(from);
+    }
+  }
+
+  hidePiece(piece: Piece, from: PlayerId) {
+    const idx = piece.visibility.indexOf(from);
+    if (idx >= 0) {
+      piece.visibility.splice(idx, 1);
+    }
   }
 }
