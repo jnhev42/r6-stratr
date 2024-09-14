@@ -20,7 +20,6 @@ export class StratController {
     // remove from model
     // this.model.map.phases
     this.model.removePiece(piece);
-
     this.view.update(this);
   }
 

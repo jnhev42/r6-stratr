@@ -1,187 +1,205 @@
 <!doctype html>
-<head>
-  <link rel="stylesheet" href="styles/index.css" />
-</head>
-<body>
-  <div id="statr-start"></div>
-  <h1 hidden>R6 Stratr</h1>
-  <form hidden>
-    <div>
-      <label for="map-select">Map</label>
-      <select name="map" id="map-select">
-        <option value="">--Please choose a map--</option>
-      </select>
-    </div>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="styles/index.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>R6 Stratr</title>
+  </head>
+  <body>
+    <div id="statr-start"></div>
+    <h1 hidden>R6 Stratr</h1>
+    <form hidden>
+      <div>
+        <label for="map-select">Map</label>
+        <select name="map" id="map-select">
+          <option value="">--Please choose a map--</option>
+        </select>
+      </div>
 
-    <fieldset id="side-select">
-      <legend>Side</legend>
+      <fieldset id="side-select">
+        <legend>Side</legend>
+
+        <div>
+          <input
+            id="side-select-atk"
+            type="radio"
+            name="side"
+            value="atk"
+            checked
+          />
+          <label for="side-select-atk">Attack</label>
+        </div>
+
+        <div>
+          <input id="side-select-def" type="radio" name="side" value="def" />
+          <label for="side-select-def">Defence</label>
+        </div>
+      </fieldset>
 
       <div>
-        <input
-          id="side-select-atk"
-          type="radio"
-          name="side"
-          value="atk"
-          checked
-        />
-        <label for="side-select-atk">Attack</label>
+        <label for="name-input">Name</label>
+        <input id="name-input" type="text" required />
       </div>
 
       <div>
-        <input id="side-select-def" type="radio" name="side" value="def" />
-        <label for="side-select-def">Defence</label>
+        <button type="submit">Submit</button>
       </div>
-    </fieldset>
+    </form>
 
-    <div>
-      <label for="name-input">Name</label>
-      <input id="name-input" type="text" required />
+    <div class="button-container" hidden>
+      <button id="save">Save</button>
+      <button id="load">Load</button>
     </div>
 
-    <div>
-      <button type="submit">Submit</button>
-    </div>
-  </form>
-
-  <div class="button-container" hidden>
-    <button id="save">Save</button>
-    <button id="load">Load</button>
-  </div>
-
-  <main>
-    <div class="left-bar">
-      <div class="nav">
-        <ul>
-          <li><button>Nav</button></li>
-          <li><button>Info</button></li>
-          <li><button>Cog</button></li>
-        </ul>
-      </div>
-      <section class="info">
-        <h2>Info</h2>
-        <div class="info-wrapper">
-          <p>Floor</p>
-        </div>
-      </section>
-      <section class="lineup">
-        <h2>Lineup</h2>
-        <div class="lineup-wrapper">
-          <div class="player">
-            <input type="text" />
-            <button class="icon">I</button>
-            <button class="gadget">G</button>
-            <button class="note">N</button>
-          </div>
-          <div class="player">
-            <input type="text" />
-            <button class="icon">I</button>
-            <button class="gadget">G</button>
-            <button class="note">N</button>
-          </div>
-          <div class="player">
-            <input type="text" />
-            <button class="icon">I</button>
-            <button class="gadget">G</button>
-            <button class="note">N</button>
-          </div>
-          <div class="player">
-            <input type="text" />
-            <button class="icon">I</button>
-            <button class="gadget">G</button>
-            <button class="note">N</button>
-          </div>
-          <div class="player">
-            <input type="text" />
-            <button class="icon">I</button>
-            <button class="gadget">G</button>
-            <button class="note">N</button>
-          </div>
-        </div>
-      </section>
-    </div>
-
-    <div class="top-bar">
-      <section class="topper">
-        <div class="menu">
+    <main>
+      <div class="left-bar">
+        <div class="nav">
           <ul>
-            <li><button class="menuBtn" value="pieces">Pieces</button></li>
-            <li><button class="menuBtn" value="markup">Markup</button></li>
-            <li><button class="menuBtn" value="ownerships">Ownerships</button></li>
+            <li><button>Nav</button></li>
+            <li><button>Info</button></li>
+            <li><button>Cog</button></li>
           </ul>
         </div>
-      </section>
-      <section class="botter">
-        <!-- gonna change this active thing to a different design, I just like how goofy it looks :p -->
-        <div class="lil-box pieces active">
-          <div class="util-box p1">
-            <div class="icon">
-              <img src="assets/Ops/Icons/Gridlock.png" alt="">
+        <section class="info">
+          <h2>Info</h2>
+          <div class="info-wrapper">
+            <p>Floor</p>
+          </div>
+        </section>
+        <section class="lineup">
+          <h2>Lineup</h2>
+          <div class="lineup-wrapper">
+            <div class="player">
+              <input type="text" />
+              <button class="icon">I</button>
+              <button class="gadget">G</button>
+              <button class="note">N</button>
             </div>
-            <div class="ability">
-              <img src="assets/Ops/Icons/Trax_Stingers.png" alt="">
+            <div class="player">
+              <input type="text" />
+              <button class="icon">I</button>
+              <button class="gadget">G</button>
+              <button class="note">N</button>
             </div>
-            <div class="gadget">
-              <img src="assets/Ops/Icons/Stun_Grenade.png" alt="">
+            <div class="player">
+              <input type="text" />
+              <button class="icon">I</button>
+              <button class="gadget">G</button>
+              <button class="note">N</button>
+            </div>
+            <div class="player">
+              <input type="text" />
+              <button class="icon">I</button>
+              <button class="gadget">G</button>
+              <button class="note">N</button>
+            </div>
+            <div class="player">
+              <input type="text" />
+              <button class="icon">I</button>
+              <button class="gadget">G</button>
+              <button class="note">N</button>
             </div>
           </div>
-          <div class="util-box p2">
-            <div class="icon">
-              <img src="assets/Ops/Icons/Gridlock.png" alt="">
-            </div>
-            <div class="ability">
-              <img src="assets/Ops/Icons/Trax_Stingers.png" alt="">
-            </div>
-            <div class="gadget">
-              <img src="assets/Ops/Icons/Stun_Grenade.png" alt="">
-            </div>
-          </div>
-          <div class="util-box p3">
-            <div class="icon">
-              <img src="assets/Ops/Icons/Gridlock.png" alt="">
-            </div>
-            <div class="ability">
-              <img src="assets/Ops/Icons/Trax_Stingers.png" alt="">
-            </div>
-            <div class="gadget">
-              <img src="assets/Ops/Icons/Stun_Grenade.png" alt="">
-            </div>
-          </div>
-          <div class="util-box p4">
-            <div class="icon">
-              <img src="assets/Ops/Icons/Gridlock.png" alt="">
-            </div>
-            <div class="ability">
-              <img src="assets/Ops/Icons/Trax_Stingers.png" alt="">
-            </div>
-            <div class="gadget">
-              <img src="assets/Ops/Icons/Stun_Grenade.png" alt="">
-            </div>
-          </div>
-          <div class="util-box p5">
-            <div class="icon">
-              <img src="assets/Ops/Icons/Gridlock.png" alt="">
-            </div>
-            <div class="ability">
-              <img src="assets/Ops/Icons/Trax_Stingers.png" alt="">
-            </div>
-            <div class="gadget">
-              <img src="assets/Ops/Icons/Stun_Grenade.png" alt="">
-            </div>
-          </div>
-        </div>
-        <div class="lil-box markup">
+        </section>
+      </div>
 
-        </div>
-        <div class="lil-box ownerships">
+      <div class="top-bar">
+        <section class="topper">
+          <div class="menu">
+            <ul>
+              <li><button class="menuBtn" value="pieces">Pieces</button></li>
+              <li><button class="menuBtn" value="markup">Markup</button></li>
+              <li>
+                <button class="menuBtn" value="ownerships">Ownerships</button>
+              </li>
+            </ul>
+          </div>
+        </section>
+        <section class="botter">
+          <!-- gonna change this active thing to a different design, I just like how goofy it looks :p -->
+          <div class="lil-box pieces active">
+            <div class="util-box p1">
+              <div class="icon">
+                <img
+                  src="assets/Ops/Icons/Gridlock.png"
+                  alt=""
+                  id="draggable"
+                  data="Gridlock"
+                />
+              </div>
+              <div class="ability">
+                <img
+                  src="assets/Ops/Icons/Trax_Stingers.png"
+                  alt=""
+                  id="draggable"
+                  data="Trax"
+                />
+              </div>
+              <div class="gadget">
+                <img
+                  src="assets/Ops/Icons/Flashbang.png"
+                  alt=""
+                  id="draggable"
+                  data="Flashbang"
+                />
+              </div>
+            </div>
+            <div class="util-box p2">
+              <div class="icon">
+                <img src="assets/Ops/Icons/Gridlock.png" alt="" />
+              </div>
+              <div class="ability">
+                <img src="assets/Ops/Icons/Trax_Stingers.png" alt="" />
+              </div>
+              <div class="gadget">
+                <img src="assets/Ops/Icons/Flashbang.png" alt="" />
+              </div>
+            </div>
+            <div class="util-box p3">
+              <div class="icon">
+                <img src="assets/Ops/Icons/Gridlock.png" alt="" />
+              </div>
+              <div class="ability">
+                <img src="assets/Ops/Icons/Trax_Stingers.png" alt="" />
+              </div>
+              <div class="gadget">
+                <img src="assets/Ops/Icons/Flashbang.png" alt="" />
+              </div>
+            </div>
+            <div class="util-box p4">
+              <div class="icon">
+                <img src="assets/Ops/Icons/Gridlock.png" alt="" />
+              </div>
+              <div class="ability">
+                <img src="assets/Ops/Icons/Trax_Stingers.png" alt="" />
+              </div>
+              <div class="gadget">
+                <img src="assets/Ops/Icons/Flashbang.png" alt="" />
+              </div>
+            </div>
+            <div class="util-box p5">
+              <div class="icon">
+                <img src="assets/Ops/Icons/Gridlock.png" alt="" />
+              </div>
+              <div class="ability">
+                <img src="assets/Ops/Icons/Trax_Stingers.png" alt="" />
+              </div>
+              <div class="gadget">
+                <img src="assets/Ops/Icons/Flashbang.png" alt="" />
+              </div>
+            </div>
+          </div>
+          <div class="lil-box markup"></div>
+          <div class="lil-box ownerships"></div>
+        </section>
+      </div>
 
-        </div>
-      </section>
-    </div>
+      <div id="stratr-edit">
+        <div id="container"></div>
+      </div>
+    </main>
 
-    <div id="stratr-edit">
-      <div id="container"></div>
-    </div>
-  </main>
-
-  <script src="index.js"></script>
-</body>
+    <script src="index.js"></script>
+  </body>
+</html>

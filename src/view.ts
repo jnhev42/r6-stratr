@@ -116,9 +116,7 @@ export class PieceView {
 
     this.image.on("dblclick", function () {
       console.log("x: ", that.image.x(), "y: ", that.image.y());
-      controller.removePiece(
-        that.piece,
-      );
+      controller.removePiece(that.piece);
     });
   }
 
@@ -128,7 +126,6 @@ export class PieceView {
 
   update() {
     this.image.setPosition(this.piece.position);
-    
   }
 }
 
