@@ -9,6 +9,18 @@ Konva.hitOnDragEnabled = true;
 const saveBtn = document.querySelector("#save");
 const loadBtn = document.querySelector("#load");
 
+const btns = document.querySelectorAll<HTMLButtonElement>(".menuBtn");
+const lilBoxes = document.querySelectorAll<HTMLElement>(".lil-box")
+
+btns.forEach(button => {
+  button.addEventListener("click", () => {
+    lilBoxes.forEach(box => box.classList.remove("active"));
+    let target: HTMLElement | null = document.querySelector(`.${button.value}`)
+    target!.classList.add("active");
+  })
+})
+
+// test data
 const testPieceGrid: Piece = {
   kind: "Gridlock",
   visibility: [],
@@ -33,9 +45,17 @@ const testPieceGrim: Piece = {
 
   console.log(model);
 
+  saveBtn?.addEventListener("click", () => {
+    const { controller, ...newModel } = model;
+    localStorage.setItem("strat", JSON.stringify(newModel));
+  });
+
+  loadBtn?.addEventListener("click", () => {
+    let newStrat = JSON.parse(localStorage.getItem("strat")!);
+  });
+
   // test code
-
   controller.addPiece(testPieceGrid, "2F", "default");
-
   controller.addPiece(testPieceGrim, "2F", "default");
 })();
+

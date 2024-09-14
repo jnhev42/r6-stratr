@@ -114,7 +114,7 @@ export class PieceView {
       controller.updatePosition(that.piece, { x, y });
     });
 
-    this.image.on("mousedown", function () {
+    this.image.on("dblclick", function () {
       console.log("x: ", that.image.x(), "y: ", that.image.y());
       controller.removePiece(
         that.piece,
