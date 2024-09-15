@@ -13,11 +13,11 @@ import { StratController } from "./controller";
 
 export type Lineup = {
   side: Side;
-  P1?: Operator;
-  P2?: Operator;
-  P3?: Operator;
-  P4?: Operator;
-  P5?: Operator;
+  P1?: OpConfig;
+  P2?: OpConfig;
+  P3?: OpConfig;
+  P4?: OpConfig;
+  P5?: OpConfig;
 };
 
 export const newLineup = (side: Side): Lineup => ({
@@ -135,5 +135,13 @@ export class Model {
         target.splice(target.indexOf(piece), 1);
       }
     }
+  }
+
+  setPlayer(player: PlayerId, operator: Operator) {
+    this.lineup[player] = newOpConfig("", operator, "Flashbang", "");
+  }
+
+  getPlayer(player: PlayerId) {
+    return this.lineup[player];
   }
 }

@@ -1,18 +1,34 @@
 import Konva from "konva";
 import { View } from "./view";
-import { Coords, Model, Piece } from "./model";
+import { Coords, Model, OpConfig, Piece } from "./model";
 import { StratController } from "./controller";
 import { essentialStartup } from "./util";
+import { Operator, PlayerId, PlayerIds, SecondaryGadgets } from "./data";
+import { PrimaryGadgets } from "./data";
 
 Konva.hitOnDragEnabled = true;
 
 const saveBtn = document.querySelector("#save");
 const loadBtn = document.querySelector("#load");
 
-const btns = document.querySelectorAll<HTMLButtonElement>(".menuBtn");
+// set up lineup buttons
+const lineupBtns = document.querySelectorAll<HTMLButtonElement>(".lineup-btn");
+
+// set up top bar buttons
+const topBarBtns = document.querySelectorAll<HTMLButtonElement>(".menuBtn");
 const lilBoxes = document.querySelectorAll<HTMLElement>(".lil-box");
 
-btns.forEach((button) => {
+const utilBoxes = document.querySelectorAll(".util-box")
+
+const dragBoxes = new Map<PlayerId, Element>()
+Object.values(PlayerIds).forEach((playerId, index) => {
+  const element = utilBoxes[index];
+  if (element) {
+    dragBoxes.set(playerId, element);
+  }
+})
+
+topBarBtns.forEach((button) => {
   button.addEventListener("click", () => {
     lilBoxes.forEach((box) => box.classList.remove("active"));
     let target: HTMLElement | null = document.querySelector(`.${button.value}`);
@@ -44,6 +60,7 @@ const testPieceGrim: Piece = {
   view.init(model, controller);
 
   initDrag(controller);
+  initSelect(model);
 
   console.log(model);
 
@@ -61,7 +78,7 @@ const testPieceGrim: Piece = {
   controller.addPiece(testPieceGrim, "2F", "default");
 })();
 
-function initDrag(controller) {
+function initDrag(controller: StratController) {
   const source = document.querySelectorAll("#draggable");
   let dragged: EventTarget | null = null;
 
@@ -71,7 +88,7 @@ function initDrag(controller) {
     });
   });
 
-  const target = document.querySelector(".konvajs-content");
+  const target: HTMLCanvasElement | null = document.querySelector(".konvajs-content");
 
   target?.addEventListener("dragover", (event: DragEvent) => {
     event.preventDefault();
@@ -103,4 +120,49 @@ function initDrag(controller) {
     controller.addPiece(gridTestTwo, "2F", "default");
     dragged = null;
   });
+}
+
+function initSelect(model: Model) {
+
+  lineupBtns.forEach((button: HTMLButtonElement) => {
+    button.addEventListener("click", () => {
+  
+      let btnType: string = button.classList[1];
+      let player: PlayerId = button.value;
+  
+      let operator: Operator = "Grim"
+  
+      if (btnType === "icon") {
+        button.innerHTML = operator; // ?
+        setIcon(player, operator, model);
+      }
+
+      setUtil(player, model);
+  
+    });
+  });
+}
+
+function setIcon(player: PlayerId, operator: Operator, model: Model) {
+  model.setPlayer(player, operator)
+}
+
+function setUtil(player: PlayerId, model: Model) {
+  const playerInfo: OpConfig = model.getPlayer(player);
+  const div: HTMLDivElement = dragBoxes.get(player);
+
+  console.log(playerInfo, div)
+
+  const icon = div.children[0]
+  const ability = div.children[1]
+  const gadget = div.children[2]
+
+  icon.children[0].setAttribute("src", `assets/Ops/Icons/${playerInfo.character}.png`)
+  icon.children[0].setAttribute("data", playerInfo.character)
+  
+  ability.children[0].setAttribute("src", `assets/Ops/Icons/${PrimaryGadgets[`${playerInfo.character}G`]}.png`)
+  ability.children[0].setAttribute("data", PrimaryGadgets[`${playerInfo.character}G`])
+  
+  gadget.children[0].setAttribute("src", `assets/Ops/Icons/${SecondaryGadgets[`${playerInfo.secondary}`]}.png`)
+  gadget.children[0].setAttribute("data", SecondaryGadgets[`${playerInfo.secondary}`])
 }
