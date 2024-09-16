@@ -6,6 +6,7 @@ import {
   Operator,
   PieceKind,
   PlayerId,
+  PlayerIds,
   SecondaryGadget,
   Side,
 } from "./data";
@@ -35,16 +36,16 @@ export type R6Map = {
 };
 
 export type OpConfig = {
-  username: string;
-  character: Operator;
-  secondary: SecondaryGadget;
-  note: string;
+  username: string | null;
+  character: Operator | null;
+  secondary: SecondaryGadget | null;
+  note: string | null;
 };
 export const newOpConfig = (
-  username: string,
-  character: Operator,
-  secondary: SecondaryGadget,
-  note: string
+  username: string | null,
+  character: Operator | null,
+  secondary: SecondaryGadget | null,
+  note: string | null
 ) => ({
   username,
   character,
@@ -135,13 +136,5 @@ export class Model {
         target.splice(target.indexOf(piece), 1);
       }
     }
-  }
-
-  setPlayer(player: PlayerId, operator: Operator) {
-    this.lineup[player] = newOpConfig("", operator, "Flashbang", "");
-  }
-
-  getPlayer(player: PlayerId) {
-    return this.lineup[player];
   }
 }

@@ -47,55 +47,62 @@
       </div>
     </form>
 
-    <div class="button-container" hidden>
-      <button id="save">Save</button>
-      <button id="load">Load</button>
-    </div>
-
     <main>
       <div class="left-bar">
         <div class="nav">
           <ul>
-            <li><button>Nav</button></li>
-            <li><button>Info</button></li>
-            <li><button>Cog</button></li>
+            <li><button class="leftMenuBtn" value="nav-box">Nav</button></li>
+            <li><button class="leftMenuBtn" value="info">Info</button></li>
+            <li><button class="leftMenuBtn" value="cog">Cog</button></li>
           </ul>
         </div>
-        <section class="info">
+        <section class="left-lil-box nav-box">
+          <p>meow</p>
+        </section>
+
+        <section class="left-lil-box info left-active">
           <h2>Info</h2>
           <div class="info-wrapper">
-            <p>Floor</p>
+            <p class="info-map-name">Map:</p>
+            <p class="info-site-name"></p>
+            <p class="info-floor-name">Floor</p>
           </div>
         </section>
+
+        <section class="left-lil-box cog">
+          <button id="save">Save</button>
+          <button id="load">Load</button>
+        </section>
+
         <section class="lineup">
           <h2>Lineup</h2>
           <div class="lineup-wrapper">
             <div class="player">
-              <input type="text" />
+              <input type="text" class="username-inp" data="P1" />
               <button class="lineup-btn icon" value="P1">I</button>
               <button class="lineup-btn gadget" value="P1">G</button>
               <button class="lineup-btn note" value="P1">N</button>
             </div>
             <div class="player">
-              <input type="text" />
+              <input type="text" class="username-inp" data="P2" />
               <button class="lineup-btn icon" value="P2">I</button>
               <button class="lineup-btn gadget" value="P2">G</button>
               <button class="lineup-btn note" value="P2">N</button>
             </div>
             <div class="player">
-              <input type="text" />
+              <input type="text" class="username-inp" data="P3" />
               <button class="lineup-btn icon" value="P3">I</button>
               <button class="lineup-btn gadget" value="P3">G</button>
               <button class="lineup-btn note" value="P3">N</button>
             </div>
             <div class="player">
-              <input type="text" />
+              <input type="text" class="username-inp" data="P4" />
               <button class="lineup-btn icon" value="P4">I</button>
               <button class="lineup-btn gadget" value="P4">G</button>
               <button class="lineup-btn note" value="P4">N</button>
             </div>
             <div class="player">
-              <input type="text" />
+              <input type="text" class="username-inp" data="P5" />
               <button class="lineup-btn icon" value="P5">I</button>
               <button class="lineup-btn gadget" value="P5">G</button>
               <button class="lineup-btn note" value="P5">N</button>
@@ -118,137 +125,63 @@
         </section>
         <section class="botter">
           <!-- gonna change this active thing to a different design, I just like how goofy it looks :p -->
-          <div class="lil-box pieces active">
+          <div class="lil-box pieces top-active">
             <div class="util-box p1">
               <div class="icon">
-                <img
-                  src=""
-                  alt=""
-                  id="draggable"
-                  data=""
-                />
+                <img src="" alt="" class="draggable" data="" />
               </div>
               <div class="ability">
-                <img
-                  src=""
-                  alt=""
-                  id="draggable"
-                  data=""
-                />
+                <img src="" alt="" class="draggable" data="" />
               </div>
               <div class="gadget">
-                <img
-                  src=""
-                  alt=""
-                  id="draggable"
-                  data=""
-                />
+                <img src="" alt="" class="draggable" data="" />
               </div>
             </div>
             <div class="util-box p2">
               <div class="icon">
-                <img
-                  src=""
-                  alt=""
-                  id="draggable"
-                  data=""
-                />
+                <img src="" alt="" class="draggable" data="" />
               </div>
               <div class="ability">
-                <img
-                  src=""
-                  alt=""
-                  id="draggable"
-                  data=""
-                />
+                <img src="" alt="" class="draggable" data="" />
               </div>
               <div class="gadget">
-                <img
-                  src=""
-                  alt=""
-                  id="draggable"
-                  data=""
-                />
+                <img src="" alt="" class="draggable" data="" />
               </div>
             </div>
             <div class="util-box p3">
               <div class="icon">
-                <img
-                  src=""
-                  alt=""
-                  id="draggable"
-                  data=""
-                />
+                <img src="" alt="" class="draggable" data="" />
               </div>
               <div class="ability">
-                <img
-                  src=""
-                  alt=""
-                  id="draggable"
-                  data=""
-                />
+                <img src="" alt="" class="draggable" data="" />
               </div>
               <div class="gadget">
-                <img
-                  src=""
-                  alt=""
-                  id="draggable"
-                  data=""
-                />
+                <img src="" alt="" class="draggable" data="" />
               </div>
             </div>
             <div class="util-box p4">
               <div class="icon">
-                <img
-                  src=""
-                  alt=""
-                  id="draggable"
-                  data=""
-                />
+                <img src="" alt="" class="draggable" data="" />
               </div>
               <div class="ability">
-                <img
-                  src=""
-                  alt=""
-                  id="draggable"
-                  data=""
-                />
+                <img src="" alt="" class="draggable" data="" />
               </div>
               <div class="gadget">
-                <img
-                  src=""
-                  alt=""
-                  id="draggable"
-                  data=""
-                />
+                <img src="" alt="" class="draggable" data="" />
               </div>
             </div>
             <div class="util-box p5">
               <div class="icon">
-                <img
-                  src=""
-                  alt=""
-                  id="draggable"
-                  data=""
-                />
+                <img src="" alt="" class="draggable" data="" />
               </div>
               <div class="ability">
-                <img
-                  src=""
-                  alt=""
-                  id="draggable"
-                  data=""
-                />
+                <img src="" alt="" class="draggable" data="" />
               </div>
               <div class="gadget">
-                <img
-                  src=""
-                  alt=""
-                  id="draggable"
-                  data=""
-                />
+                <img src="" alt="" class="draggable" data="" />
               </div>
             </div>
+          </div>
           <div class="lil-box markup"></div>
           <div class="lil-box ownerships"></div>
         </section>
@@ -258,6 +191,12 @@
         <div id="container"></div>
       </div>
     </main>
+
+    <!-- Icons Popup -->
+    <div class="operator-popup"></div>
+
+    <!-- Util Popup -->
+    <div class="util-popup"></div>
 
     <script src="index.js"></script>
   </body>

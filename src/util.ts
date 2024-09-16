@@ -3,8 +3,7 @@ import Konva from "konva";
 // assets\Ops\Icons\recruit_blue.png
 
 const LOADING_IMAGE = new Image();
-LOADING_IMAGE.src = "assets/Ops/Icons/recruit_blue.png";
-
+LOADING_IMAGE.src = "assets/Ops/Icons/haha.jpg";
 export const essentialStartup = (): Promise<void> => {
   if (LOADING_IMAGE.complete) return new Promise(() => {});
   return new Promise((res) => (LOADING_IMAGE.onload = () => res()));
