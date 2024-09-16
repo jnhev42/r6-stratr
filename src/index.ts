@@ -1,9 +1,24 @@
 import Konva from "konva";
 import { View } from "./view";
-import { Coords, Model, OpConfig, Piece } from "./model";
+import { Coords, Model, newOpConfig, OpConfig, Piece } from "./model";
 import { StratController } from "./controller";
 import { essentialStartup } from "./util";
-import { Operator, PlayerId, PlayerIds, SecondaryGadgets } from "./data";
+import {
+  AttackerGadget,
+  Attackers,
+  AttackerSecondaryGadget,
+  AttackerSecondaryGadgets,
+  DefenderGadget,
+  Defenders,
+  DefenderSecondaryGadget,
+  DefenderSecondaryGadgets,
+  Operator,
+  PieceKind,
+  PlayerId,
+  PlayerIds,
+  SecondaryGadget,
+  SecondaryGadgets,
+} from "./data";
 import { PrimaryGadgets } from "./data";
 
 Konva.hitOnDragEnabled = true;
@@ -18,15 +33,17 @@ const lineupBtns = document.querySelectorAll<HTMLButtonElement>(".lineup-btn");
 const topBarBtns = document.querySelectorAll<HTMLButtonElement>(".menuBtn");
 const lilBoxes = document.querySelectorAll<HTMLElement>(".lil-box");
 
-const utilBoxes = document.querySelectorAll(".util-box")
+const utilBoxes = document.querySelectorAll(".util-box");
 
-const dragBoxes = new Map<PlayerId, Element>()
+let currentPlayerSelected: PlayerId | null = null;
+
+const dragBoxes = new Map<PlayerId, Element>();
 Object.values(PlayerIds).forEach((playerId, index) => {
   const element = utilBoxes[index];
   if (element) {
     dragBoxes.set(playerId, element);
   }
-})
+});
 
 topBarBtns.forEach((button) => {
   button.addEventListener("click", () => {
@@ -35,6 +52,10 @@ topBarBtns.forEach((button) => {
     target!.classList.add("active");
   });
 });
+
+// pop ups
+const opPopUp = document.querySelector(".operator-popup");
+const utilPopUp = document.querySelector(".util-popup");
 
 // test data
 const testPieceGrid: Piece = {
@@ -60,7 +81,9 @@ const testPieceGrim: Piece = {
   view.init(model, controller);
 
   initDrag(controller);
-  initSelect(model);
+  initLineupSelect(model);
+  initLineupPopupSelect(model);
+  initGadgetPopupSelect(model);
 
   console.log(model);
 
@@ -79,7 +102,7 @@ const testPieceGrim: Piece = {
 })();
 
 function initDrag(controller: StratController) {
-  const source = document.querySelectorAll("#draggable");
+  const source = document.querySelectorAll(".draggable");
   let dragged: EventTarget | null = null;
 
   source.forEach((innerSource) => {
@@ -88,7 +111,8 @@ function initDrag(controller: StratController) {
     });
   });
 
-  const target: HTMLCanvasElement | null = document.querySelector(".konvajs-content");
+  const target: HTMLCanvasElement | null =
+    document.querySelector(".konvajs-content");
 
   target?.addEventListener("dragover", (event: DragEvent) => {
     event.preventDefault();
@@ -112,7 +136,7 @@ function initDrag(controller: StratController) {
     let dataVal = draggedEl!.attributes.getNamedItem("data")?.value;
 
     let gridTestTwo: Piece = {
-      kind: dataVal,
+      kind: dataVal as PieceKind,
       visibility: [],
       position: { x, y },
     };
@@ -122,47 +146,143 @@ function initDrag(controller: StratController) {
   });
 }
 
-function initSelect(model: Model) {
-
+function initLineupSelect(model: Model) {
   lineupBtns.forEach((button: HTMLButtonElement) => {
     button.addEventListener("click", () => {
-  
       let btnType: string = button.classList[1];
-      let player: PlayerId = button.value;
-  
-      let operator: Operator = "Grim"
-  
-      if (btnType === "icon") {
-        button.innerHTML = operator; // ?
-        setIcon(player, operator, model);
-      }
+      currentPlayerSelected = button.value as PlayerId;
 
-      setUtil(player, model);
-  
+      if (btnType === "icon") {
+        opPopUp?.classList.add("popup-active");
+      } else if (btnType === "gadget") {
+        if (currentPlayerSelected in model.lineup) {
+          utilPopUp?.classList.add("popup-active");
+        }
+      } else if (btnType === "note") {
+        // note functionality here
+      } else {
+        console.log("tf");
+      }
     });
   });
 }
 
-function setIcon(player: PlayerId, operator: Operator, model: Model) {
-  model.setPlayer(player, operator)
+// maybe merge these functions?
+// populate the lineup popup
+function initLineupPopupSelect(model: Model) {
+  let ops = model.lineup.side === "atk" ? Attackers : Defenders;
+
+  Object.keys(ops).forEach((op) => {
+    const div = document.createElement("div");
+    const img = document.createElement("img");
+
+    div.setAttribute("data", op);
+    img.src = `assets/ops/icons/${op}.png`;
+    img.alt = op;
+
+    div.appendChild(img);
+
+    div.addEventListener("click", () => {
+      let opSelected: Operator = div.getAttribute("data") as Operator;
+
+      console.log(currentPlayerSelected, opSelected);
+
+      if (currentPlayerSelected && opSelected) {
+        setOperator(currentPlayerSelected, opSelected, model);
+        refreshDisplayInfo(model);
+      }
+
+      opPopUp?.classList.remove("popup-active");
+    });
+
+    opPopUp?.append(div);
+  });
 }
 
-function setUtil(player: PlayerId, model: Model) {
-  const playerInfo: OpConfig = model.getPlayer(player);
-  const div: HTMLDivElement = dragBoxes.get(player);
+// populate the gadget popup
+function initGadgetPopupSelect(model: Model) {
+  let gadgets =
+    model.lineup.side === "atk"
+      ? AttackerSecondaryGadgets
+      : DefenderSecondaryGadgets;
 
-  console.log(playerInfo, div)
+  Object.keys(gadgets).forEach((gadget) => {
+    const div = document.createElement("div");
+    const img = document.createElement("img");
 
-  const icon = div.children[0]
-  const ability = div.children[1]
-  const gadget = div.children[2]
+    div.setAttribute("data", gadget);
+    img.src = `assets/ops/icons/${gadget}.png`;
+    img.alt = gadget;
 
-  icon.children[0].setAttribute("src", `assets/Ops/Icons/${playerInfo.character}.png`)
-  icon.children[0].setAttribute("data", playerInfo.character)
-  
-  ability.children[0].setAttribute("src", `assets/Ops/Icons/${PrimaryGadgets[`${playerInfo.character}G`]}.png`)
-  ability.children[0].setAttribute("data", PrimaryGadgets[`${playerInfo.character}G`])
-  
-  gadget.children[0].setAttribute("src", `assets/Ops/Icons/${SecondaryGadgets[`${playerInfo.secondary}`]}.png`)
-  gadget.children[0].setAttribute("data", SecondaryGadgets[`${playerInfo.secondary}`])
+    div.appendChild(img);
+
+    div.addEventListener("click", () => {
+      let gadgetSelected: SecondaryGadget = div.getAttribute(
+        "data"
+      ) as SecondaryGadget;
+
+      if (currentPlayerSelected && gadgetSelected) {
+        setGadget(currentPlayerSelected, gadgetSelected, model);
+        refreshDisplayInfo(model);
+      }
+
+      utilPopUp?.classList.remove("popup-active");
+    });
+
+    utilPopUp?.append(div);
+  });
+}
+
+function setOperator(player: PlayerId, operator: Operator, model: Model) {
+  model.lineup[player] = newOpConfig(null, operator, null, "");
+}
+
+function setGadget(player: PlayerId, gadget: SecondaryGadget, model: Model) {
+  if (model.lineup[player]) {
+    model.lineup[player].secondary = gadget;
+  } else {
+    console.error("can't add becuase no existing player");
+  }
+}
+
+// refresh all of the display elements (go over the model)
+function refreshDisplayInfo(model: Model) {
+  const { side, ...players } = model.lineup;
+
+  Object.keys(players).forEach((player) => {
+    const playerInfo: OpConfig = model.lineup[player];
+    const div: HTMLDivElement = dragBoxes.get(
+      player as PlayerId
+    ) as HTMLDivElement;
+
+    const icon = div.children[0];
+    const ability = div.children[1];
+    const gadget = div.children[2];
+
+    icon.children[0].setAttribute(
+      "src",
+      `assets/Ops/Icons/${playerInfo.character}.png`
+    );
+    icon.children[0].setAttribute("data", playerInfo.character);
+
+    ability.children[0].setAttribute(
+      "src",
+      `assets/Ops/abilities/${PrimaryGadgets[`${playerInfo.character}G`]}.png`
+    );
+    ability.children[0].setAttribute(
+      "data",
+      PrimaryGadgets[`${playerInfo.character}G`]
+    );
+
+    if (playerInfo.secondary) {
+      gadget.children[0].setAttribute(
+        "src",
+        `assets/Ops/utility/${SecondaryGadgets[`${playerInfo.secondary}`]}.png`
+      );
+      gadget.children[0].setAttribute(
+        "data",
+        SecondaryGadgets[`${playerInfo.secondary}`]
+      );
+    }
+  });
 }

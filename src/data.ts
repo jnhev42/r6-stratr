@@ -48,7 +48,7 @@ export const AttackerGadgets = {
   CapitaoG: ["Smoke_bolt", "Fire_bolt"],
   HibanaG: "Xkarios",
   YingG: "Candela",
-  ZofiaG: ["Impact_stun", "Impact_concuss"],
+  ZofiaG: ["Impact_grenade", "Impact_concuss"],
   DokkaebiG: "Call",
   LionG: "Ee_one_d",
   FinkaG: "Adrenal",
@@ -70,12 +70,12 @@ export type AttackerGadget =
   (typeof AttackerGadgets)[keyof typeof AttackerGadgets];
 
 export const AttackerSecondaryGadgets = {
-  FragGrenade: "FragGrenade",
-  SmokeGrenade: "SmokeGrenade",
-  Flashbang: "Flashbang",
-  ImpactEmp: "ImpactEmp",
   CanOpener: "CanOpener",
   Claymore: "Claymore",
+  Flashbang: "Flashbang",
+  FragGrenade: "FragGrenade",
+  ImpactEmp: "ImpactEmp",
+  SmokeGrenade: "SmokeGrenade",
   Softbreach: "Softbreach",
 } as const;
 export type AttackerSecondaryGadget =
@@ -127,24 +127,27 @@ export const DefenderGadgets = {
   MuteG: "Jammer",
   CastleG: "Armor_panel",
   KapkanG: "Edd",
-  TachankaG: "Molly",
+  TachankaG: "Shumikha",
   JagerG: "Ads",
   BanditG: "Batteries",
-  FrostG: "Mats",
+  FrostG: "Welcome_mat",
   ValkyireG: "Black_eye",
   EchoG: "Yokai",
   MiraG: "Window",
   LesionG: "Gu",
   ElaG: "Grzmot",
   MaestroG: "Evil_eye",
-  AlibiG: "Clone",
+  AlibiG: "Prisma",
   KaidG: "Claw",
   MozzieG: "Pest",
-  GoyoG: "Gas_can",
+  GoyoG: "Volcan",
   WamaiG: "Disc",
   OryxG: "Dash",
   MelusiG: "Banshee",
   AruniG: "Surya",
+  ThunderbirdG: "Kona",
+  ThornG: "Razer",
+  AzamiG: "Kiba",
   FenrirG: "Fnat",
   TubaraoG: "Zoto",
 } as const;
@@ -152,13 +155,13 @@ export type DefenderGadget =
   (typeof DefenderGadgets)[keyof typeof DefenderGadgets];
 
 export const DefenderSecondaryGadgets = {
-  C4: "C4",
-  Shield: "Shield",
-  BulletproofCamera: "BulletproofCamera",
-  ObservationBlocker: "ObservationBlocker",
   BarbedWire: "BarbedWire",
+  BulletproofCamera: "BulletproofCamera",
   Impact: "Impact",
+  Nitro: "Nitro",
+  ObservationBlocker: "ObservationBlocker",
   ProximityAlarm: "ProximityAlarm",
+  Shield: "Shield",
 } as const;
 export type DefenderSecondaryGadget =
   (typeof DefenderSecondaryGadgets)[keyof typeof DefenderSecondaryGadgets];

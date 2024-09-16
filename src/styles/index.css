@@ -9,6 +9,7 @@
 
 body {
   color: blue;
+  position: relative;
 }
 
 #container {
@@ -45,10 +46,7 @@ main {
 
 /* lineup */
 .lineup {
-  
 }
-
-
 
 .top-bar {
   background: #360036;
@@ -126,4 +124,34 @@ main {
 
 .stratr-edit {
   background: blue;
+}
+
+/* pop ups */
+.operator-popup,
+.util-popup {
+  display: none;
+  position: absolute;
+  z-index: 100;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40vw;
+  min-height: 40vh;
+  border: 3px solid black;
+  background: red;
+  border-radius: 30px;
+}
+
+.operator-popup {
+  grid-template-columns: repeat(8, 1fr);
+}
+
+.util-popup {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.popup-active {
+  display: grid;
+  align-items: center;
+  justify-items: center;
 }

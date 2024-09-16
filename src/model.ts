@@ -35,15 +35,15 @@ export type R6Map = {
 };
 
 export type OpConfig = {
-  username: string;
+  username: string | null;
   character: Operator;
-  secondary: SecondaryGadget;
+  secondary: SecondaryGadget | null;
   note: string;
 };
 export const newOpConfig = (
-  username: string,
+  username: string | null,
   character: Operator,
-  secondary: SecondaryGadget,
+  secondary: SecondaryGadget | null,
   note: string
 ) => ({
   username,
@@ -135,13 +135,5 @@ export class Model {
         target.splice(target.indexOf(piece), 1);
       }
     }
-  }
-
-  setPlayer(player: PlayerId, operator: Operator) {
-    this.lineup[player] = newOpConfig("", operator, "Flashbang", "");
-  }
-
-  getPlayer(player: PlayerId) {
-    return this.lineup[player];
   }
 }
