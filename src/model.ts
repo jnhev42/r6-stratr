@@ -6,6 +6,7 @@ import {
   Operator,
   PieceKind,
   PlayerId,
+  PlayerIds,
   SecondaryGadget,
   Side,
 } from "./data";
@@ -36,15 +37,15 @@ export type R6Map = {
 
 export type OpConfig = {
   username: string | null;
-  character: Operator;
+  character: Operator | null;
   secondary: SecondaryGadget | null;
-  note: string;
+  note: string | null;
 };
 export const newOpConfig = (
   username: string | null,
-  character: Operator,
+  character: Operator | null,
   secondary: SecondaryGadget | null,
-  note: string
+  note: string | null
 ) => ({
   username,
   character,
