@@ -64,7 +64,7 @@ const copier = {
 
 const tsconfig = { 
     compilerOptions: {
-        lib: ["es5", "es6", "dom", "es2019"], 
+        lib: ["es5", "es6", "dom", "es2022"], 
         target: "es2015"
     }
 };
