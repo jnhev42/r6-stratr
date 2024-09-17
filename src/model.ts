@@ -91,20 +91,26 @@ export const newPhase = (phaseName: string, mapName: MapName): Phase => ({
   ),
 });
 
-export class Model {
-  controller: StratController;
-
+export type ModelT = {
   stratName: string;
   map: R6Map;
   lineup: Lineup;
+};
+
+export class Model {
+  controller: StratController;
+
+  m: ModelT;
 
   constructor(stratName: string, mapName: MapName, side: Side) {
-    this.stratName = stratName;
-    this.map = {
-      name: mapName,
-      phases: [newPhase("default", mapName)],
+    this.m = {
+      stratName,
+      map: {
+        name: mapName,
+        phases: [newPhase("default", mapName)],
+      },
+      lineup: newLineup(side),
     };
-    this.lineup = newLineup(side);
   }
 
   init(controller: StratController) {
@@ -112,7 +118,7 @@ export class Model {
   }
 
   getFloor(floor: MapFloorName, phaseName: string): Floor | undefined {
-    const phase = this.map.phases.find(
+    const phase = this.m.map.phases.find(
       (phase) => phase.phaseName === phaseName
     );
     if (!phase) return undefined;
@@ -120,7 +126,7 @@ export class Model {
   }
 
   *pieces(): Generator<[Piece, MapFloorName, string], void, unknown> {
-    for (const phase of this.map.phases) {
+    for (const phase of this.m.map.phases) {
       for (const floor of Object.values(phase.floors)) {
         for (const piece of floor.pieces) {
           yield [piece, floor.floorName, phase.phaseName];
