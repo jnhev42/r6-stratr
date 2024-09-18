@@ -90,23 +90,20 @@ export namespace diff {
 
     if (isEmptyObject(o1) || isEmptyObject(o2)) {
       if (isEmptyObject(o1) && isEmptyObject(o2)) return [];
-
-      if (isEmptyObject(o1)) {
-        wb[0][wb[1]] = {
-          kind: o2 === undefined ? DiffKinds.DELETED : DiffKinds.UPDATED,
-          data: o1,
-        };
-
-        return [];
-      }
-
-      if (isEmptyObject(o2)) {
+      if (o1 === undefined) {
         wb[0][wb[1]] = {
           kind: DiffKinds.CREATED,
           data: o2,
         };
         return [];
       }
+      
+      wb[0][wb[1]] = {
+        kind: o2 === undefined ? DiffKinds.DELETED : DiffKinds.UPDATED,
+        data: o1,
+      };
+
+      return [];
     }
 
     const next: MapIterStep[] = [];
@@ -125,7 +122,7 @@ export namespace diff {
     return next;
   };
 
-  const writebackAllKeys = <T>(o: T): [T, DiffKey][] =>
+  const writebackAllKeys = <T extends object>(o: T): [T, DiffKey][] =>
     Object.keys(o).map((k): [T, DiffKey] => [o, k]);
 
   export const map = (o1: any, o2: any): Diff => {
