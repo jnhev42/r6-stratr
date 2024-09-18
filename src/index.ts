@@ -1,7 +1,7 @@
 import Konva from "konva";
 import { View } from "./view";
 import { Coords, Model, newOpConfig, OpConfig, Piece } from "./model";
-import { StratController } from "./controller";
+import { HistoryController, StratController } from "./controller";
 import { essentialStartup } from "./util";
 import {
   AttackerGadget,
@@ -172,8 +172,10 @@ function initLineupSelect(model: Model) {
 
       if (btnType === "icon") {
         opPopUp?.classList.add("popup-active");
-      } else if (btnType === "gadget" && currentPlayerSelected in model.lineup) {
-        utilPopUp?.classList.add("popup-active");
+      } else if (btnType === "gadget") {
+        if (currentPlayerSelected in model.m.lineup) {
+          utilPopUp?.classList.add("popup-active");
+        }
       } else if (btnType === "note") {
         // note functionality here
       }
@@ -189,10 +191,10 @@ function populatePopupSelect(
 ) {
   let items =
     type === "operator"
-      ? model.lineup.side === "atk"
+      ? model.m.lineup.side === "atk"
         ? Attackers
         : Defenders
-      : model.lineup.side === "atk"
+      : model.m.lineup.side === "atk"
         ? AttackerSecondaryGadgets
         : DefenderSecondaryGadgets;
 
@@ -221,17 +223,17 @@ function populatePopupSelect(
 }
 
 function setOperator(player: PlayerId, operator: Operator, model: Model) {
-  if (model.lineup[player]) {
-    model.lineup[player].character = operator;
+  if (model.m.lineup[player]) {
+    model.m.lineup[player].character = operator;
   } else {
-    model.lineup[player] = newOpConfig(null, operator, null, null);
+    model.m.lineup[player] = newOpConfig(null, operator, null, null);
   }
   refreshDisplayInfo(model);
 }
 
 function setGadget(player: PlayerId, gadget: SecondaryGadget, model: Model) {
-  if (model.lineup[player]) {
-    model.lineup[player].secondary = gadget;
+  if (model.m.lineup[player]) {
+    model.m.lineup[player].secondary = gadget;
   } else {
     console.error("No existing player");
   }
@@ -239,25 +241,25 @@ function setGadget(player: PlayerId, gadget: SecondaryGadget, model: Model) {
 }
 
 function setUsername(player: PlayerId, username: string, model: Model) {
-  if (model.lineup[player]) {
-    model.lineup[player].username = username;
+  if (model.m.lineup[player]) {
+    model.m.lineup[player].username = username;
   } else {
-    model.lineup[player] = newOpConfig(username, null, null, null);
+    model.m.lineup[player] = newOpConfig(username, null, null, null);
   }
   refreshDisplayInfo(model);
 }
 
 // refresh all of the display elements (go over the model)
 function refreshDisplayInfo(model: Model) {
-  const { side, ...players } = model.lineup;
+  const { side, ...players } = model.m.lineup;
 
   // Left bar info
   document.querySelector(".info-map-name")!.innerHTML =
-    `Map: ${model.map.name}`;
+    `Map: ${model.m.map.name}`;
 
   // Top bar
   Object.keys(players).forEach((player) => {
-    const playerInfo: OpConfig = model.lineup[player];
+    const playerInfo: OpConfig = model.m.lineup[player];
     const div: HTMLDivElement = dragBoxes.get(
       player as PlayerId
     ) as HTMLDivElement;

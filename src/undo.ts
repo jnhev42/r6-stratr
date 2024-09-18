@@ -26,7 +26,7 @@ export namespace diff {
     Object.values(DiffKinds).includes(o.kind);
 
   type Diff = {
-    [key: DiffKey]: Diff | DiffVal;
+    [key: DiffKey]: Diff | DiffVal
   };
 
   const valueChange = (v1: Value, v2: Value): DiffKind => {
@@ -88,6 +88,27 @@ export namespace diff {
       return [];
     }
 
+    if (isEmptyObject(o1) || isEmptyObject(o2)) {
+      if (isEmptyObject(o1) && isEmptyObject(o2)) return [];
+
+      if (isEmptyObject(o1)) {
+        wb[0][wb[1]] = {
+          kind: o2 === undefined ? DiffKinds.DELETED : DiffKinds.UPDATED,
+          data: o1,
+        };
+
+        return [];
+      }
+
+      if (isEmptyObject(o2)) {
+        wb[0][wb[1]] = {
+          kind: DiffKinds.CREATED,
+          data: o2,
+        };
+        return [];
+      }
+    }
+
     const next: MapIterStep[] = [];
     const skip = new Set();
     const diff: Diff = {};
@@ -117,15 +138,14 @@ export namespace diff {
       next.push(...mapIter(i));
     }
 
+    // post-order traverse tree for empty nodes
     const check = writebackAllKeys(root);
     for (const [p, k] of check) {
       const v = p[k];
       if (isDiffVal(v)) continue;
-
+      
       if (isEmptyObject(v)) {
         delete p[k];
-      } else {
-        check.push(...writebackAllKeys(v));
       }
     }
 
@@ -141,7 +161,11 @@ export namespace diff {
   const undoIter = ({ wb, diff, key }: UndoIterStep): UndoIterStep[] => {
     if (isDiffVal(diff[key])) {
       if (diff[key].kind === DiffKinds.CREATED) {
-        delete wb[key];
+        if (isArray(wb)) {
+          wb.splice(key as number, 1);
+        } else {
+          delete wb[key];
+        }
       }
       if (
         diff[key].kind === DiffKinds.DELETED ||
