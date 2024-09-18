@@ -25,8 +25,8 @@ export namespace diff {
     (o as DiffVal)?.kind !== undefined &&
     Object.values(DiffKinds).includes(o.kind);
 
-  type Diff = {
-    [key: DiffKey]: Diff | DiffVal
+  export type Diff = {
+    [key: DiffKey]: Diff | DiffVal;
   };
 
   const valueChange = (v1: Value, v2: Value): DiffKind => {
@@ -97,7 +97,7 @@ export namespace diff {
         };
         return [];
       }
-      
+
       wb[0][wb[1]] = {
         kind: o2 === undefined ? DiffKinds.DELETED : DiffKinds.UPDATED,
         data: o1,
@@ -140,7 +140,7 @@ export namespace diff {
     for (const [p, k] of check) {
       const v = p[k];
       if (isDiffVal(v)) continue;
-      
+
       if (isEmptyObject(v)) {
         delete p[k];
       }

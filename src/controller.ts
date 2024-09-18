@@ -1,5 +1,13 @@
 import { MapFloorName, PlayerId } from "./data";
-import { Model, OpConfig, Phase, Floor, Piece, Coords, ModelT } from "./model";
+import {
+  Model,
+  OpConfig,
+  Phase,
+  Floor,
+  Piece,
+  Coords,
+  StratModel,
+} from "./model";
 import { diff } from "./undo";
 import { View } from "./view";
 
@@ -23,8 +31,6 @@ export class StratController {
   }
 
   removePiece(piece: Piece) {
-    // remove from model
-    // this.model.map.phases
     this.model.removePiece(piece);
     this.hist.restorePoint();
     this.view.update(this);
@@ -50,12 +56,12 @@ export class StratController {
 }
 
 export class HistoryController {
-  lastModel: ModelT;
-  model: ModelT;
+  lastModel: StratModel;
+  model: StratModel;
   diffs: diff.Diff[];
   updateView: () => void;
 
-  constructor(model: ModelT, updateView: () => void) {
+  constructor(model: StratModel, updateView: () => void) {
     this.model = model;
     this.lastModel = structuredClone(this.model);
     this.diffs = [];

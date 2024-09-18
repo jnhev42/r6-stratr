@@ -1,6 +1,13 @@
 import Konva from "konva";
 import { View } from "./view";
-import { Coords, Model, newOpConfig, OpConfig, Piece } from "./model";
+import {
+  Coords,
+  emptyStratModel,
+  Model,
+  newOpConfig,
+  OpConfig,
+  Piece,
+} from "./model";
 import { HistoryController, StratController } from "./controller";
 import { essentialStartup } from "./util";
 import {
@@ -25,6 +32,7 @@ Konva.hitOnDragEnabled = true;
 
 const saveBtn = document.querySelector("#save");
 const loadBtn = document.querySelector("#load");
+const delBtn = document.querySelector("#del");
 
 // set left bar buttons
 const leftBarBtns =
@@ -36,6 +44,7 @@ const lineupBtns = document.querySelectorAll<HTMLButtonElement>(".lineup-btn");
 const topBarBtns = document.querySelectorAll<HTMLButtonElement>(".menuBtn");
 const lilBoxes = document.querySelectorAll<HTMLElement>(".lil-box");
 const utilBoxes = document.querySelectorAll<HTMLElement>(".util-box");
+const usernameInputs = document.querySelectorAll(".username-inp");
 
 // pop ups
 const opPopUp = document.querySelector(".operator-popup");
@@ -43,8 +52,18 @@ const utilPopUp = document.querySelector(".util-popup");
 
 let currentPlayerSelected: PlayerId | null = null;
 
-const dragBoxes = new Map<PlayerId, Element>(
-  Object.values(PlayerIds).map((playerId, index) => [playerId, utilBoxes[index]])
+const utilBoxesMap = new Map<PlayerId, Element>(
+  Object.values(PlayerIds).map((playerId, index) => [
+    playerId,
+    utilBoxes[index],
+  ])
+);
+
+const usernameInputMap = new Map<PlayerId, Element>(
+  Object.values(PlayerIds).map((playerId, index) => [
+    playerId,
+    usernameInputs[index],
+  ])
 );
 
 topBarBtns.forEach((button) => {
@@ -63,30 +82,27 @@ leftBarBtns.forEach((button) => {
   });
 });
 
-
-
 (async () => {
-  
-  let newStrat: Model | null = JSON.parse(localStorage.getItem("strat") as string);
-  
+  let newStrat = JSON.parse(localStorage.getItem("strat") as string);
+
   let model: Model;
   if (newStrat) {
-    model = new Model(newStrat.m.stratName, "Consulate", "atk");
+    model = new Model(newStrat);
   } else {
-    model = new Model("test", "Consulate", "atk");
+    model = new Model(emptyStratModel("cool_idea", "Consulate", "def"));
   }
-  
+
   await essentialStartup();
   const controller = new StratController();
   const view = new View(controller);
-  
+
   // initialise the MVC
   model.init(controller);
   controller.init(model, view);
   view.init(model, controller);
-  
-  console.log(model)
-  
+
+  console.log(model);
+
   // init event things
   initDrag(controller);
   initLineupSelect(model);
@@ -96,15 +112,21 @@ leftBarBtns.forEach((button) => {
 
   // initial refresh
   refreshDisplayInfo(model);
+  view.update(controller);
 
   // saving and loading
   saveBtn?.addEventListener("click", () => {
     const { controller, ...newModel } = model;
-    localStorage.setItem("strat", JSON.stringify(newModel));
+    console.log(newModel.m)
+    localStorage.setItem("strat", JSON.stringify(newModel.m));
   });
 
   loadBtn?.addEventListener("click", () => {
     let newStrat = JSON.parse(localStorage.getItem("strat")!);
+  });
+
+  delBtn?.addEventListener("click", () => {
+    localStorage.removeItem("strat");
   });
 })();
 
@@ -191,10 +213,10 @@ function populatePopupSelect(
 ) {
   let items =
     type === "operator"
-      ? model.m.lineup.side === "atk"
+      ? model.m.side === "atk"
         ? Attackers
         : Defenders
-      : model.m.lineup.side === "atk"
+      : model.m.side === "atk"
         ? AttackerSecondaryGadgets
         : DefenderSecondaryGadgets;
 
@@ -251,7 +273,7 @@ function setUsername(player: PlayerId, username: string, model: Model) {
 
 // refresh all of the display elements (go over the model)
 function refreshDisplayInfo(model: Model) {
-  const { side, ...players } = model.m.lineup;
+  const players = model.m.lineup;
 
   // Left bar info
   document.querySelector(".info-map-name")!.innerHTML =
@@ -260,7 +282,13 @@ function refreshDisplayInfo(model: Model) {
   // Top bar
   Object.keys(players).forEach((player) => {
     const playerInfo: OpConfig = model.m.lineup[player];
-    const div: HTMLDivElement = dragBoxes.get(
+
+    const usernameInput: HTMLInputElement = usernameInputMap.get(
+      player as PlayerId
+    ) as HTMLInputElement;
+    usernameInput.value = playerInfo.username as string;
+
+    const div: HTMLDivElement = utilBoxesMap.get(
       player as PlayerId
     ) as HTMLDivElement;
 

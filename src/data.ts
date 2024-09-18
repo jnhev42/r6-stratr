@@ -94,7 +94,7 @@ export const Defenders = {
   Bandit: "Bandit",
   Frost: "Frost",
   Valkyrie: "Valkyire",
-  Caviera: "Caveira",
+  Caveira: "Caveira",
   Echo: "Echo",
   Mira: "Mira",
   Lesion: "Lesion",
@@ -208,7 +208,7 @@ export const MapNames = {
 } as const;
 export type MapName = (typeof MapNames)[keyof typeof MapNames];
 
-export const MapFloors = {
+export const MapFloors: { readonly [key in MapName]: MapFloorName[] } = {
   Bank: ["B", "1F", "2F"],
   Border: ["1F", "2F"],
   Chalet: ["B", "1F", "2F"],
