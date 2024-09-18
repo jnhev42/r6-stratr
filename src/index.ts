@@ -35,18 +35,17 @@ const lineupBtns = document.querySelectorAll<HTMLButtonElement>(".lineup-btn");
 // set up top bar buttons
 const topBarBtns = document.querySelectorAll<HTMLButtonElement>(".menuBtn");
 const lilBoxes = document.querySelectorAll<HTMLElement>(".lil-box");
+const utilBoxes = document.querySelectorAll<HTMLElement>(".util-box");
 
-const utilBoxes = document.querySelectorAll(".util-box");
+// pop ups
+const opPopUp = document.querySelector(".operator-popup");
+const utilPopUp = document.querySelector(".util-popup");
 
 let currentPlayerSelected: PlayerId | null = null;
 
-const dragBoxes = new Map<PlayerId, Element>();
-Object.values(PlayerIds).forEach((playerId, index) => {
-  const element = utilBoxes[index];
-  if (element) {
-    dragBoxes.set(playerId, element);
-  }
-});
+const dragBoxes = new Map<PlayerId, Element>(
+  Object.values(PlayerIds).map((playerId, index) => [playerId, utilBoxes[index]])
+);
 
 topBarBtns.forEach((button) => {
   button.addEventListener("click", () => {
@@ -64,21 +63,31 @@ leftBarBtns.forEach((button) => {
   });
 });
 
-// pop ups
-const opPopUp = document.querySelector(".operator-popup");
-const utilPopUp = document.querySelector(".util-popup");
+
 
 (async () => {
+  
+  let newStrat: Model | null = JSON.parse(localStorage.getItem("strat"));
+  
+  let model: Model;
+  if (newStrat) {
+    model = new Model(newStrat.stratName, "Consulate", "atk");
+  } else {
+    model = new Model("test", "Consulate", "atk");
+  }
+  
   await essentialStartup();
-  const model = new Model("balls", "Consulate", "atk");
   const controller = new StratController();
   const view = new View(controller);
-
+  
   // initialise the MVC
   model.init(controller);
   controller.init(model, view);
   view.init(model, controller);
-
+  
+  console.log(model)
+  
+  // init event things
   initDrag(controller);
   initLineupSelect(model);
   populatePopupSelect(model, "operator", opPopUp as HTMLElement);
@@ -87,8 +96,6 @@ const utilPopUp = document.querySelector(".util-popup");
 
   // initial refresh
   refreshDisplayInfo(model);
-
-  console.log(model);
 
   // saving and loading
   saveBtn?.addEventListener("click", () => {
@@ -130,19 +137,16 @@ function initDrag(controller: StratController) {
     let x = event.clientX - rect.left - 15;
     let y = event.clientY - rect.top - 15;
 
-    console.log(event.x, event.y);
-    console.log(x, y);
-
     let draggedEl = dragged as HTMLElement;
     let dataVal = draggedEl!.attributes.getNamedItem("data")?.value;
 
-    let gridTestTwo: Piece = {
+    let newPiece: Piece = {
       kind: dataVal as PieceKind,
       visibility: [],
       position: { x, y },
     };
 
-    controller.addPiece(gridTestTwo, "2F", "default");
+    controller.addPiece(newPiece, "2F", "default");
     dragged = null;
   });
 }
@@ -168,14 +172,10 @@ function initLineupSelect(model: Model) {
 
       if (btnType === "icon") {
         opPopUp?.classList.add("popup-active");
-      } else if (btnType === "gadget") {
-        if (currentPlayerSelected in model.lineup) {
-          utilPopUp?.classList.add("popup-active");
-        }
+      } else if (btnType === "gadget" && currentPlayerSelected in model.lineup) {
+        utilPopUp?.classList.add("popup-active");
       } else if (btnType === "note") {
         // note functionality here
-      } else {
-        console.log("tf");
       }
     });
   });
@@ -200,37 +200,26 @@ function populatePopupSelect(
     const div = document.createElement("div");
     const img = document.createElement("img");
 
-    div.setAttribute("data", item);
     img.src = `assets/ops/icons/${item}.png`;
     img.alt = item;
+    div.setAttribute("data", item);
 
     div.appendChild(img);
 
     div.addEventListener("click", () => {
-      if (type === "operator") {
-        let opSelected: Operator = div.getAttribute("data") as Operator;
-
-        if (currentPlayerSelected && opSelected) {
-          setOperator(currentPlayerSelected, opSelected, model);
-        }
-      } else if (type === "gadget") {
-        let gadgetSelected: SecondaryGadget = div.getAttribute(
-          "data"
-        ) as SecondaryGadget;
-
-        if (currentPlayerSelected && gadgetSelected) {
-          setGadget(currentPlayerSelected, gadgetSelected, model);
+      if (currentPlayerSelected) {
+        if (type === "operator") {
+          setOperator(currentPlayerSelected, item as Operator, model);
+        } else if (type === "gadget") {
+          setGadget(currentPlayerSelected, item as SecondaryGadget, model);
         }
       }
-
       popupElement?.classList.remove("popup-active");
     });
-
     popupElement?.appendChild(div);
   });
 }
 
-// I this this might want to be done in the controller :p
 function setOperator(player: PlayerId, operator: Operator, model: Model) {
   if (model.lineup[player]) {
     model.lineup[player].character = operator;
@@ -240,12 +229,11 @@ function setOperator(player: PlayerId, operator: Operator, model: Model) {
   refreshDisplayInfo(model);
 }
 
-// I this this might want to be done in the controller :p
 function setGadget(player: PlayerId, gadget: SecondaryGadget, model: Model) {
   if (model.lineup[player]) {
     model.lineup[player].secondary = gadget;
   } else {
-    console.error("can't add becuase no existing player");
+    console.error("No existing player");
   }
   refreshDisplayInfo(model);
 }
@@ -267,14 +255,13 @@ function refreshDisplayInfo(model: Model) {
   document.querySelector(".info-map-name")!.innerHTML =
     `Map: ${model.map.name}`;
 
-  // Lineup && Top bar
+  // Top bar
   Object.keys(players).forEach((player) => {
     const playerInfo: OpConfig = model.lineup[player];
     const div: HTMLDivElement = dragBoxes.get(
       player as PlayerId
     ) as HTMLDivElement;
 
-    // Top bar
     const icon = div.children[0];
     const ability = div.children[1];
     const gadget = div.children[2];

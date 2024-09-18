@@ -1,4 +1,3 @@
-
 /**
  * Errors on:
  * - Symbols
@@ -17,17 +16,17 @@ export namespace diff {
 
   type DiffKey = string | number;
 
-
   export type DiffVal = {
-    kind: DiffKind,
-    data: Value,
+    kind: DiffKind;
+    data: Value;
   };
 
   export const isDiffVal = (o: any): o is DiffVal =>
-    (o as DiffVal)?.kind !== undefined && Object.values(DiffKinds).includes(o.kind);
+    (o as DiffVal)?.kind !== undefined &&
+    Object.values(DiffKinds).includes(o.kind);
 
   type Diff = {
-    [key: DiffKey]: Diff | DiffVal
+    [key: DiffKey]: Diff | DiffVal;
   };
 
   const valueChange = (v1: Value, v2: Value): DiffKind => {
@@ -46,24 +45,17 @@ export namespace diff {
     return DiffKinds.UPDATED;
   };
 
-  const isBase = <T>(o: any, name: string): o is T => 
+  const isBase = <T>(o: any, name: string): o is T =>
     Object.prototype.toString.call(o) === name;
 
-  const isFunction = (o: any): o is Function =>
-    isBase(o, "[object Function]");
-  const isArray = (o: any): o is Array<any> =>
-    isBase(o, "[object Array]");
-  const isDate = (o: any): o is Date =>
-    isBase(o, "[object Date]");
-  const isObject = (o: any): o is object =>
-    isBase(o, "[object Object]");
-  const isSymbol = (o: any): o is Symbol => 
-    isBase(o, "[object Symbol]");
+  const isFunction = (o: any): o is Function => isBase(o, "[object Function]");
+  const isArray = (o: any): o is Array<any> => isBase(o, "[object Array]");
+  const isDate = (o: any): o is Date => isBase(o, "[object Date]");
+  const isObject = (o: any): o is object => isBase(o, "[object Object]");
+  const isSymbol = (o: any): o is Symbol => isBase(o, "[object Symbol]");
   const isValue = (o: any): o is Value => !isObject(o) && !isArray(o);
-  
 
-  const isEmptyObject = (o: object): boolean =>
-      Object.keys(o).length === 0;
+  const isEmptyObject = (o: object): boolean => Object.keys(o).length === 0;
 
   const throwIfUndiffable = (...os: any[]) => {
     for (const o of os) {
@@ -75,11 +67,11 @@ export namespace diff {
       }
     }
   };
-  
+
   type MapIterStep = {
-    wb: [Diff, DiffKey], // writeback
-    o1: any,
-    o2: any,
+    wb: [Diff, DiffKey]; // writeback
+    o1: any;
+    o2: any;
   };
 
   const mapIter = ({ wb, o1, o2 }: MapIterStep): MapIterStep[] => {
@@ -90,7 +82,7 @@ export namespace diff {
       if (kind !== DiffKinds.UNCHANGED) {
         wb[0][wb[1]] = {
           kind,
-          data: o1 === undefined ? o2 : o1
+          data: o1 === undefined ? o2 : o1,
         };
       }
       return [];
@@ -105,14 +97,15 @@ export namespace diff {
     }
     for (const k in o2) {
       if (skip.has(k)) continue;
-      next.push({ wb: [diff, k], o1: undefined, o2: o2[k]});
+      next.push({ wb: [diff, k], o1: undefined, o2: o2[k] });
     }
     wb[0][wb[1]] = diff;
 
     return next;
   };
 
-  const writebackAllKeys = <T>(o: T): ([T, DiffKey])[] => Object.keys(o).map((k): [T, DiffKey] => [o, k]);
+  const writebackAllKeys = <T>(o: T): [T, DiffKey][] =>
+    Object.keys(o).map((k): [T, DiffKey] => [o, k]);
 
   export const map = (o1: any, o2: any): Diff => {
     throwIfUndiffable(o1, o2);
@@ -128,21 +121,21 @@ export namespace diff {
     for (const [p, k] of check) {
       const v = p[k];
       if (isDiffVal(v)) continue;
-      
+
       if (isEmptyObject(v)) {
         delete p[k];
       } else {
         check.push(...writebackAllKeys(v));
       }
     }
-    
+
     return root.diff as Diff;
   };
 
   type UndoIterStep = {
-    wb: any, // writeback
-    diff: Diff,
-    key: DiffKey
+    wb: any; // writeback
+    diff: Diff;
+    key: DiffKey;
   };
 
   const undoIter = ({ wb, diff, key }: UndoIterStep): UndoIterStep[] => {
@@ -150,37 +143,42 @@ export namespace diff {
       if (diff[key].kind === DiffKinds.CREATED) {
         delete wb[key];
       }
-      if (diff[key].kind === DiffKinds.DELETED || diff[key].kind == DiffKinds.UPDATED) {
+      if (
+        diff[key].kind === DiffKinds.DELETED ||
+        diff[key].kind == DiffKinds.UPDATED
+      ) {
         wb[key] = diff[key].data;
       }
       return [];
     } else {
       if (diff[key] === undefined) return [];
-      if (wb[key] === undefined) { 
+      if (wb[key] === undefined) {
         wb[key] = {};
       }
-      return Object.keys(diff[key]).
-        map((nk): UndoIterStep => ({
+      return Object.keys(diff[key]).map(
+        (nk): UndoIterStep => ({
           diff: diff[key] as Diff,
           wb: wb[key],
           key: nk,
-        }));
+        })
+      );
     }
-  }
+  };
 
   export const undo = (o: any, diff: Diff): any => {
     const rootObj = { root: o };
     const rootDiff = { root: diff };
-    const next: UndoIterStep[] = [{ 
-      wb: rootObj,
-      diff: rootDiff,
-      key: "root"
-    }];
+    const next: UndoIterStep[] = [
+      {
+        wb: rootObj,
+        diff: rootDiff,
+        key: "root",
+      },
+    ];
     for (const step of next) {
       next.push(...undoIter(step));
     }
 
     return o;
-  }
+  };
 }
-
