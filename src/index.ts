@@ -67,11 +67,11 @@ leftBarBtns.forEach((button) => {
 
 (async () => {
   
-  let newStrat: Model | null = JSON.parse(localStorage.getItem("strat"));
+  let newStrat: Model | null = JSON.parse(localStorage.getItem("strat") as string);
   
   let model: Model;
   if (newStrat) {
-    model = new Model(newStrat.stratName, "Consulate", "atk");
+    model = new Model(newStrat.m.stratName, "Consulate", "atk");
   } else {
     model = new Model("test", "Consulate", "atk");
   }
