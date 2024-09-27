@@ -1,5 +1,5 @@
 import Konva from "konva";
-import { View } from "./view";
+import { View, StageView } from "./view";
 import {
   Coords,
   emptyStratModel,
@@ -99,12 +99,14 @@ leftBarBtns.forEach((button) => {
   // initialise the MVC
   model.init(controller);
   controller.init(model, view);
-  view.init(model, controller);
+  const stageView: StageView = view.init(model, controller);
+
+  console.log(stageView);
 
   console.log(model);
 
   // init event things
-  initDrag(controller);
+  initDrag(controller, stageView);
   initLineupSelect(model);
   populatePopupSelect(model, "operator", opPopUp as HTMLElement);
   populatePopupSelect(model, "gadget", utilPopUp as HTMLElement);
@@ -131,7 +133,7 @@ leftBarBtns.forEach((button) => {
 })();
 
 // initialises the dragging functionality from the top bar to the canvas
-function initDrag(controller: StratController) {
+function initDrag(controller: StratController, stageView: StageView) {
   const source = document.querySelectorAll(".draggable");
   let dragged: EventTarget | null = null;
 
@@ -151,13 +153,29 @@ function initDrag(controller: StratController) {
   target?.addEventListener("drop", (event: DragEvent) => {
     event.preventDefault();
 
+    console.log(stageView.floors[0].bp.layer)
+
+    const layer = stageView.floors[0].bp.layer;
+
+    const pointerPos = layer.getRelativePointerPosition();
+
+    console.log(pointerPos)
+
     // get mouse pos relative to canvas
     // also this does it to the canvas and not the layer :p
     let rect = target.getBoundingClientRect();
     // ok I used 15 but I don't know why this works, the math just worked in my head I didn't actually look at any numbers,
     // this can't stay this way ofc (it makes it drop where the cursor is)
-    let x = event.clientX - rect.left - 15;
-    let y = event.clientY - rect.top - 15;
+
+    // let x = event.clientX - rect.left - 15;
+    // let y = event.clientY - rect.top - 15;
+
+    // console.log("orig:", x, y)
+
+    let x = pointerPos?.x;
+    let y = pointerPos?.y;
+
+    console.log("new", x, y)
 
     let draggedEl = dragged as HTMLElement;
     let dataVal = draggedEl!.attributes.getNamedItem("data")?.value;

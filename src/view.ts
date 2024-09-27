@@ -39,6 +39,10 @@ export class BlueprintView {
 
     this.layer.add(this.image);
 
+    this.layer.on("click", () => {
+      console.log(this.layer.getRelativePointerPosition())
+    });
+
     this.image.width(1200); // temp vals for because it annoys the fuck out of me
     this.image.height(700);
   }
